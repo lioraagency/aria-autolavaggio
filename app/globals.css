@@ -2,32 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --aria-bg: #0A0A0A;
+  --aria-surface: #121212;
+  --aria-elevated: #1A1A1A;
+  --aria-accent: #D4FF3F;
+  --aria-text: #F5F5F5;
+  --aria-muted: #8A8A8A;
+  --aria-success: #30D158;
+  --aria-danger: #FF453A;
+  --aria-warning: #FF9F0A;
+  --aria-info: #0A84FF;
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
 }
 
 html {
-  background: #06100A;
+  background: var(--aria-bg);
   overscroll-behavior: none;
 }
 
 body {
-  background: #06100A;
-  color: #E8E8DC;
+  background: var(--aria-bg);
+  color: var(--aria-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
 }
 
 /* Safe area */
-.pb-safe  { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
-.pt-safe  { padding-top: env(safe-area-inset-top, 0px); }
-.mb-safe  { margin-bottom: env(safe-area-inset-bottom, 0px); }
+.pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
+.pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+.mb-safe { margin-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Card press feedback */
+.card-press {
+  transition: transform 100ms ease-out, opacity 100ms ease-out;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.card-press:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Bottom sheet backdrop blur */
+.sheet-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
   .font-display {
     font-family: var(--font-barlow-condensed, "Barlow Condensed", sans-serif);
+  }
+  .inset-shadow {
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
   }
 }
