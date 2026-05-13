@@ -315,3 +315,38 @@ export function getTodayStats() {
   const next = scheduled.sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime())[0]
   return { active, ready, revenue, estimated, scheduled, next }
 }
+
+// ── Mutation helpers (used by public booking API) ─────────────────────────
+
+export function findCustomerByPhone(phone: string): Customer | undefined {
+  // Normalize: strip all non-digits for comparison
+  const normalize = (p: string) => p.replace(/\D/g, '')
+  const target = normalize(phone)
+  return CUSTOMERS.find(c => normalize(c.phone) === target)
+}
+
+export function addCustomer(data: Omit<Customer, 'id'>): Customer {
+  const id = `c${String(CUSTOMERS.length + 1).padStart(2, '0')}`
+  const customer: Customer = { id, ...data }
+  CUSTOMERS.push(customer)
+  return customer
+}
+
+export function addVehicle(data: Omit<Vehicle, 'id'>): Vehicle {
+  const id = `v${String(VEHICLES.length + 1).padStart(2, '0')}`
+  const vehicle: Vehicle = { id, ...data }
+  VEHICLES.push(vehicle)
+  return vehicle
+}
+
+export function addBooking(data: Omit<Booking, 'id'>): Booking {
+  const num = BOOKINGS.length + 1
+  const id = `b${String(num).padStart(2, '0')}`
+  const booking: Booking = { id, ...data }
+  BOOKINGS.push(booking)
+  return booking
+}
+
+export function getBookingById(id: string): Booking | undefined {
+  return BOOKINGS.find(b => b.id === id)
+}

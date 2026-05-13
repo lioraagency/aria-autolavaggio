@@ -17,13 +17,16 @@ const barlowCondensed = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "ARIA · Autolavaggio",
-  description: "Cockpit Autolavaggio — by LIORA",
+  title: {
+    default: "Autolavaggio — Lavage auto à la main · Sainte-Foy",
+    template: "%s · Autolavaggio",
+  },
+  description: "Lavage auto manuel professionnel à Sainte-Foy, Québec. Service extérieur, intérieur et complet. Réservation en ligne en 60 secondes.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "ARIA",
+    title: "Autolavaggio",
   },
   other: {
     "mobile-web-app-capable": "yes",
@@ -35,7 +38,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#06100A",
+  themeColor: "#0A0A0A",
   viewportFit: "cover",
 };
 
