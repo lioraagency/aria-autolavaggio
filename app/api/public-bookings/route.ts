@@ -7,8 +7,9 @@ import {
   getBookingById,
   VEHICLES,
 } from '@/lib/mock-data'
-import { SERVICE_PRICES, SERVICE_DURATIONS } from '@/lib/types'
+import { SERVICE_PRICES, SERVICE_DURATIONS, SERVICE_LABELS } from '@/lib/types'
 import type { ServiceType, VehicleType } from '@/lib/types'
+import { addAlert } from '@/lib/store'
 
 export async function POST(req: NextRequest) {
   try {
@@ -103,6 +104,16 @@ export async function POST(req: NextRequest) {
     // Update customer stats
     customer.totalVisits += 1
     customer.totalSpent += booking.price
+
+    // Create alert in the in-memory store
+    const scheduledDate = scheduledAt.toLocaleDateString('fr-CA', { month: 'short', day: 'numeric' })
+    const scheduledTime = scheduledAt.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit', hour12: false })
+    addAlert({
+      type: 'rdv',
+      title: 'Nouvelle réservation',
+      body: `${firstName} ${lastName} — ${SERVICE_LABELS[serviceType as ServiceType]} — ${scheduledDate} à ${scheduledTime}`,
+      reservationId: booking.id,
+    })
 
     // Format booking number for display
     const bookingNumber = `B-${booking.id.replace('b', '').padStart(3, '0')}`

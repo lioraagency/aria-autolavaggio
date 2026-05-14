@@ -137,6 +137,20 @@ export function getNextStatus(current: OperationalStatus): OperationalStatus | n
   return OPERATIONAL_PIPELINE[idx + 1]
 }
 
+// ── Alert ─────────────────────────────────────────────────────────────────
+
+export type AlertType = 'rdv' | 'annulation' | 'rappel' | 'vide' | 'demande'
+
+export interface Alert {
+  id: string
+  type: AlertType
+  title: string
+  body: string
+  reservationId?: string
+  isRead: boolean
+  createdAt: Date
+}
+
 export function getNextStatusLabel(current: OperationalStatus): string | null {
   const next = getNextStatus(current)
   if (!next) return null
