@@ -123,35 +123,39 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
         <span className="font-condensed font-black uppercase text-aria-muted text-sm tracking-wider">
           Suppléments
         </span>
-        {SUPPLEMENTS.map(sup => (
-          <label
-            key={sup.key}
-            className="flex items-center gap-3 cursor-pointer group"
-          >
-            <div
-              className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 transition-all ${
-                state.supplements.includes(sup.key)
-                  ? 'bg-aria-accent border-aria-accent'
-                  : 'border-[rgba(255,255,255,0.12)] bg-aria-surface'
-              }`}
-              onClick={() => handleSupplementToggle(sup.key)}
+        {SUPPLEMENTS.map(sup => {
+          const checked = state.supplements.includes(sup.key)
+          return (
+            <label
+              key={sup.key}
+              className="flex items-center gap-4 cursor-pointer min-h-[52px] bg-aria-surface border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-3 active:bg-aria-elevated transition-colors"
             >
-              {state.supplements.includes(sup.key) && (
-                <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
-                  <path d="M2 6l3 3 5-5" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </div>
-            <input
-              type="checkbox"
-              name={`supplement-${sup.key}`}
-              className="sr-only"
-              checked={state.supplements.includes(sup.key)}
-              onChange={() => handleSupplementToggle(sup.key)}
-            />
-            <span className="text-aria-text font-sans text-sm">{sup.label}</span>
-          </label>
-        ))}
+              <input
+                type="checkbox"
+                name={`supplement-${sup.key}`}
+                className="sr-only"
+                checked={checked}
+                onChange={() => handleSupplementToggle(sup.key)}
+              />
+              {/* Custom visual — pointer-events: none so only the label fires */}
+              <div
+                aria-hidden="true"
+                className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 transition-all pointer-events-none ${
+                  checked
+                    ? 'bg-aria-accent border-aria-accent'
+                    : 'border-[rgba(255,255,255,0.25)] bg-transparent'
+                }`}
+              >
+                {checked && (
+                  <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
+                    <path d="M2 6l3 3 5-5" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-aria-text font-sans text-sm flex-1">{sup.label}</span>
+            </label>
+          )
+        })}
       </div>
 
       <div className="border border-[rgba(255,255,255,0.06)] rounded-xl p-4 bg-aria-surface">

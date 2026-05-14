@@ -76,7 +76,7 @@ export default function StepConfirm({ state, onBack }: StepProps) {
     setError(null)
 
     try {
-      const res = await fetch('/api/public-bookings', {
+      const res = await fetch('/api/reservations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -101,8 +101,12 @@ export default function StepConfirm({ state, onBack }: StepProps) {
       })
 
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body?.error ?? `Erreur ${res.status}`)
+        const body = (await res.json().catch(() => ({}))) as { error?: string }
+        const msg =
+          typeof body?.error === 'string' && body.error.length > 0
+            ? body.error
+            : `Erreur ${res.status}`
+        throw new Error(msg)
       }
 
       const data: { success: boolean; bookingId: string; bookingNumber: string } = await res.json()

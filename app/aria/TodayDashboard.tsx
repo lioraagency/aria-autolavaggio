@@ -58,6 +58,11 @@ export default function TodayDashboard({ initialBookings, stats: initialStats }:
       ? { ...prev, operationalStatus: newStatus }
       : prev
     );
+    fetch(`/api/reservations/${bookingId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus }),
+    }).catch(() => { /* optimistic update already applied */ });
   }, []);
 
   const handleSmsSend = useCallback(async (bookingId: string) => {
@@ -88,6 +93,11 @@ export default function TodayDashboard({ initialBookings, stats: initialStats }:
       b.id === bookingId ? { ...b, operationalStatus: 'cancelled' as OperationalStatus } : b
     ));
     setSelected(null);
+    fetch(`/api/reservations/${bookingId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'cancelled' }),
+    }).catch(() => { /* optimistic update already applied */ });
   }, []);
 
   const selectedCustomer = selected ? getCustomer(selected.customerId) : undefined;

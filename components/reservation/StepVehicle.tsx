@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { VehicleType } from '@/lib/types'
 
 interface BookingFormState {
@@ -49,7 +49,14 @@ const COLORS: { label: string; dot: string }[] = [
   { label: 'Autre', dot: '#D4FF3F' },
 ]
 
-const MAKES = ['Toyota','Honda','Ford','GMC','Mazda','Hyundai','Kia','Volkswagen','BMW','Mercedes','Audi','Lexus','Subaru','Nissan','Chevrolet','Tesla','Volvo']
+const TOP_SELLERS = ['Toyota','Honda','Ford','GMC','Mazda','Hyundai','Kia','Volkswagen','Subaru','Nissan','Chevrolet','Tesla','Volvo','Mitsubishi','Ram','Jeep','Dodge']
+const LUXURY = ['BMW','Mercedes-Benz','Audi','Lexus','Porsche','Cadillac','Lincoln','Infiniti','Acura','Genesis','Land Rover','Jaguar','Maserati','Bentley','Rolls-Royce','Lamborghini','Ferrari','Lotus','McLaren','Aston Martin','Bugatti']
+
+type MakeGroup = { group: string; items: string[] }
+const MAKES_GROUPS: MakeGroup[] = [
+  { group: 'Populaires', items: TOP_SELLERS },
+  { group: 'Luxe / Premium', items: LUXURY },
+]
 
 const INITIAL_CHIP_FOR_TYPE: Record<VehicleType, string> = {
   sedan: 'Berline',
@@ -62,6 +69,22 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
   const [selectedChipLabel, setSelectedChipLabel] = useState<string>(
     INITIAL_CHIP_FOR_TYPE[state.vehicleType]
   )
+  const [makesOpen, setMakesOpen] = useState(false)
+  const [makesQuery, setMakesQuery] = useState(state.vehicleMake)
+  const makesRef = useRef<HTMLDivElement>(null)
+
+  const filteredGroups: MakeGroup[] = makesQuery.trim()
+    ? MAKES_GROUPS.map(g => ({
+        group: g.group,
+        items: g.items.filter(m => m.toLowerCase().includes(makesQuery.toLowerCase())),
+      })).filter(g => g.items.length > 0)
+    : MAKES_GROUPS
+
+  function selectMake(make: string) {
+    setMakesQuery(make)
+    onChange({ vehicleMake: make })
+    setMakesOpen(false)
+  }
 
   function handleChipSelect(chip: { label: string; value: VehicleType }) {
     setSelectedChipLabel(chip.label)
@@ -106,23 +129,75 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
       </div>
 
       {/* Make */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2" ref={makesRef}>
         <label htmlFor="vehicleMake" className="font-condensed font-black uppercase text-aria-muted text-sm tracking-wider">
           Marque
         </label>
-        <input
-          type="text"
-          id="vehicleMake"
-          name="vehicleMake"
-          list="makes-list"
-          value={state.vehicleMake}
-          onChange={e => onChange({ vehicleMake: e.target.value })}
-          placeholder="Toyota, Honda, Ford..."
-          className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
-        />
-        <datalist id="makes-list">
-          {MAKES.map(m => <option key={m} value={m} />)}
-        </datalist>
+        <div className="relative">
+          <input
+            type="text"
+            id="vehicleMake"
+            name="vehicleMake"
+            autoComplete="off"
+            value={makesQuery}
+            onChange={e => {
+              setMakesQuery(e.target.value)
+              onChange({ vehicleMake: e.target.value })
+              setMakesOpen(true)
+            }}
+            onFocus={() => setMakesOpen(true)}
+            onBlur={() => setTimeout(() => setMakesOpen(false), 150)}
+            placeholder="Toyota, Honda, Ford..."
+            className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
+          />
+          {makesOpen && filteredGroups.length > 0 && (
+            <ul
+              role="listbox"
+              className="absolute z-50 left-0 right-0 mt-1 rounded-xl overflow-hidden shadow-2xl"
+              style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.08)', maxHeight: '260px', overflowY: 'auto' }}
+            >
+              {filteredGroups.map((group, gi) => (
+                <li key={group.group}>
+                  {gi > 0 && (
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '0' }} />
+                  )}
+                  <div className="px-4 pt-2 pb-1 font-condensed font-black uppercase text-[10px] tracking-widest" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                    {group.group}
+                  </div>
+                  <ul>
+                    {group.items.map(make => (
+                      <li
+                        key={make}
+                        role="option"
+                        aria-selected={state.vehicleMake === make}
+                        onMouseDown={() => selectMake(make)}
+                        className="px-4 py-2.5 cursor-pointer font-sans text-sm transition-colors"
+                        style={{
+                          color: state.vehicleMake === make ? '#0A0A0A' : 'rgba(255,255,255,0.80)',
+                          background: state.vehicleMake === make ? '#D4FF3F' : 'transparent',
+                        }}
+                        onMouseEnter={e => {
+                          if (state.vehicleMake !== make) {
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(212,255,63,0.12)'
+                            ;(e.currentTarget as HTMLElement).style.color = '#D4FF3F'
+                          }
+                        }}
+                        onMouseLeave={e => {
+                          if (state.vehicleMake !== make) {
+                            (e.currentTarget as HTMLElement).style.background = 'transparent'
+                            ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.80)'
+                          }
+                        }}
+                      >
+                        {make}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
       {/* Model */}
