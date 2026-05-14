@@ -61,8 +61,13 @@ export default function ReservationPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formState, setFormState] = useState<BookingFormState>(INITIAL_STATE)
 
-  function handleChange(updates: Partial<BookingFormState>) {
-    setFormState(prev => ({ ...prev, ...updates }))
+  function handleChange(
+    updates: Partial<BookingFormState> | ((prev: BookingFormState) => Partial<BookingFormState>)
+  ) {
+    setFormState(prev => ({
+      ...prev,
+      ...(typeof updates === 'function' ? updates(prev) : updates),
+    }))
   }
 
   function handleNext() {

@@ -1,5 +1,6 @@
 'use client'
 
+import type { ChangeEvent } from 'react'
 import { ServiceType, SERVICE_PRICES, SERVICE_DURATIONS } from '@/lib/types'
 
 interface BookingFormState {
@@ -22,9 +23,13 @@ interface BookingFormState {
   isFirstVisit: boolean
 }
 
+type BookingFormUpdater =
+  | Partial<BookingFormState>
+  | ((prev: BookingFormState) => Partial<BookingFormState>)
+
 interface StepProps {
   state: BookingFormState
-  onChange: (updates: Partial<BookingFormState>) => void
+  onChange: (updates: BookingFormUpdater) => void
   onNext: () => void
   onBack: () => void
 }
@@ -57,13 +62,17 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
     onChange({ serviceType: key, totalPrice: total })
   }
 
-  function handleSupplementToggle(key: string) {
-    const already = state.supplements.includes(key)
-    const newSupplements = already
-      ? state.supplements.filter(s => s !== key)
-      : [...state.supplements, key]
-    const total = computeTotal(state.serviceType, newSupplements)
-    onChange({ supplements: newSupplements, totalPrice: total })
+  function handleSupplementChange(key: string, e: ChangeEvent<HTMLInputElement>) {
+    const checked = e.currentTarget.checked
+    onChange(prev => {
+      const newSupplements = checked
+        ? [...prev.supplements.filter(s => s !== key), key]
+        : prev.supplements.filter(s => s !== key)
+      return {
+        supplements: newSupplements,
+        totalPrice: computeTotal(prev.serviceType, newSupplements),
+      }
+    })
   }
 
   const totalDisplay = Math.round(state.totalPrice / 100)
@@ -128,31 +137,32 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
           return (
             <label
               key={sup.key}
-              className="flex items-center gap-4 cursor-pointer min-h-[52px] bg-aria-surface border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-3 active:bg-aria-elevated transition-colors"
+              className="relative block min-h-[44px] cursor-pointer touch-manipulation rounded-xl border border-[rgba(255,255,255,0.06)] bg-aria-surface transition-colors active:bg-aria-elevated"
             >
               <input
                 type="checkbox"
                 name={`supplement-${sup.key}`}
-                className="sr-only"
                 checked={checked}
-                onChange={() => handleSupplementToggle(sup.key)}
+                onChange={e => handleSupplementChange(sup.key, e)}
+                className="absolute inset-0 z-10 m-0 h-full min-h-[44px] w-full cursor-pointer opacity-0"
               />
-              {/* Custom visual — pointer-events: none so only the label fires */}
-              <div
-                aria-hidden="true"
-                className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 transition-all pointer-events-none ${
-                  checked
-                    ? 'bg-aria-accent border-aria-accent'
-                    : 'border-[rgba(255,255,255,0.25)] bg-transparent'
-                }`}
-              >
-                {checked && (
-                  <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
-                    <path d="M2 6l3 3 5-5" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
+              <div className="pointer-events-none flex min-h-[44px] items-center gap-4 px-4 py-3">
+                <div
+                  aria-hidden="true"
+                  className={`relative z-0 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all ${
+                    checked
+                      ? 'border-aria-accent bg-aria-accent'
+                      : 'border-[rgba(255,255,255,0.25)] bg-transparent'
+                  }`}
+                >
+                  {checked && (
+                    <svg viewBox="0 0 12 12" fill="none" className="h-3 w-3">
+                      <path d="M2 6l3 3 5-5" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </div>
+                <span className="relative z-0 flex-1 font-sans text-sm text-aria-text">{sup.label}</span>
               </div>
-              <span className="text-aria-text font-sans text-sm flex-1">{sup.label}</span>
             </label>
           )
         })}
