@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
-import type { Booking, OperationalStatus, Customer } from "@/lib/types";
+import type { Booking, OperationalStatus, Customer, Vehicle } from "@/lib/types";
 import { getNextStatus, centsToDisplay } from "@/lib/types";
 import { getCustomer, getVehicle } from "@/lib/mock-data";
 import StatCard from "@/components/StatCard";
@@ -20,9 +20,11 @@ interface Props {
   initialBookings: Booking[];
   stats: TodayStats;
   enriched: Array<{ booking: Booking; customer: Customer | undefined }>;
+  customerMap?: Record<string, Customer>;
+  vehicleMap?:  Record<string, Vehicle>;
 }
 
-export default function TodayDashboard({ initialBookings, stats: initialStats }: Props) {
+export default function TodayDashboard({ initialBookings, stats: initialStats, customerMap, vehicleMap }: Props) {
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [selected, setSelected]   = useState<Booking | null>(null);
   const [toast,    setToast]       = useState<string>("");
@@ -67,7 +69,9 @@ export default function TodayDashboard({ initialBookings, stats: initialStats }:
 
   const handleSmsSend = useCallback(async (bookingId: string) => {
     const booking  = bookings.find(b => b.id === bookingId);
-    const customer = booking ? getCustomer(booking.customerId) : undefined;
+    const customer = booking
+      ? (customerMap?.[booking.customerId] ?? getCustomer(booking.customerId))
+      : undefined;
     if (!customer || !booking) return;
 
     try {
@@ -100,8 +104,12 @@ export default function TodayDashboard({ initialBookings, stats: initialStats }:
     }).catch(() => { /* optimistic update already applied */ });
   }, []);
 
-  const selectedCustomer = selected ? getCustomer(selected.customerId) : undefined;
-  const selectedVehicle  = selected ? getVehicle(selected.vehicleId)   : undefined;
+  const selectedCustomer = selected
+    ? (customerMap?.[selected.customerId] ?? getCustomer(selected.customerId))
+    : undefined;
+  const selectedVehicle = selected
+    ? (vehicleMap?.[selected.vehicleId] ?? getVehicle(selected.vehicleId))
+    : undefined;
 
   const nextTime = nextRdv
     ? nextRdv.scheduledAt.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit', hour12: false })

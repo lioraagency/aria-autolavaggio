@@ -16,7 +16,10 @@ const barlowCondensed = Barlow_Condensed({
   display: "swap",
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://aria-autolavaggio-lioraagencys-projects.vercel.app'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
   title: {
     default: "Autolavaggio — Lavage auto à la main · Sainte-Foy",
     template: "%s · Autolavaggio",

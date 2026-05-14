@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
 import { sessionOptions } from "@/lib/auth";
 import type { SessionData } from "@/lib/auth";
-import { getTodayBookings, getTodayStats, getCustomer } from "@/lib/mock-data";
+import { getCockpitData, computeTodayStats } from "@/lib/supabase/data";
 import AriaHeader from "@/components/AriaHeader";
 import TodayDashboard from "./TodayDashboard";
 
@@ -17,13 +17,13 @@ async function getSession(): Promise<SessionData | null> {
 export default async function TodayPage() {
   const session  = await getSession();
   const userName = session?.userName ?? "vous";
-  const bookings = getTodayBookings();
-  const stats    = getTodayStats();
 
-  // Enrich bookings with customer info for initial render
+  const { bookings, customerMap, vehicleMap } = await getCockpitData('today');
+  const stats = computeTodayStats(bookings);
+
   const enriched = bookings.map(b => ({
     booking:  b,
-    customer: getCustomer(b.customerId),
+    customer: customerMap[b.customerId],
   }));
 
   return (
@@ -33,6 +33,8 @@ export default async function TodayPage() {
         initialBookings={bookings}
         stats={stats}
         enriched={enriched}
+        customerMap={customerMap}
+        vehicleMap={vehicleMap}
       />
     </div>
   );

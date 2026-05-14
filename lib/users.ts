@@ -8,8 +8,8 @@ export interface AriaUser {
 }
 
 export const USERS: AriaUser[] = [
-  { id: "raph",  name: "Raph",  role: "owner", pin: "1999" },
-  { id: "demo",  name: "Demo",  role: "demo",  pin: "2000" },
+  { id: "raph", name: "Raph", role: "owner", pin: process.env.ARIA_OWNER_PIN ?? "1999" },
+  { id: "demo", name: "Demo", role: "demo",  pin: process.env.ARIA_DEMO_PIN  ?? "2000" },
 ];
 
 export function getUserByPin(pin: string): AriaUser | undefined {
