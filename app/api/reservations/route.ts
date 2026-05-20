@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceSupabase, SupabaseConfigError } from "@/lib/supabase/service";
 import { SERVICE_DURATIONS, SERVICE_PRICES, type ServiceType } from "@/lib/types";
+import { sendOwnerConfirmation } from "@/lib/email/send-confirmation";
 
 const VALID_SERVICE: ServiceType[] = ["exterior", "interior", "complete"];
 
@@ -262,6 +263,24 @@ export async function POST(req: NextRequest) {
     if (updErr) {
       console.error("[api/reservations] update customer stats:", updErr);
     }
+
+    // Send owner email — fire and forget, never block the response
+    sendOwnerConfirmation({
+      bookingNumber: bookingNumberFromId(reservationId),
+      firstName,
+      lastName,
+      phone,
+      email,
+      serviceType: st,
+      supplements,
+      scheduledAt: scheduledAt.toISOString(),
+      vehicleMake,
+      vehicleModel,
+      vehicleYear,
+      vehicleColor,
+      vehicleType,
+      totalPriceCents: priceCents,
+    }).catch(e => console.error('[email] owner notification failed:', e))
 
     return NextResponse.json({
       success: true,
