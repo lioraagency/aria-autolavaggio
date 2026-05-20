@@ -76,13 +76,13 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
         </table>
       </div>
       <div style="padding:12px 24px;background:#f9f9f9;font-size:12px;color:#999">
-        ARIA · Autolavaggio — Généré automatiquement
+        Auto Lavaggio — Généré automatiquement
       </div>
     </div>
   `
 
   await resend.emails.send({
-    from: 'ARIA Autolavaggio <notifications@liora.services>',
+    from: 'Auto Lavaggio <notifications@liora.services>',
     to: OWNER_EMAIL,
     subject: `🚗 Nouvelle réservation ${p.bookingNumber} — ${p.firstName} ${p.lastName} (${dateStr})`,
     html,

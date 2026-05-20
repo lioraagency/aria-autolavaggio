@@ -1,6 +1,6 @@
 {
-  "name": "ARIA · Autolavaggio",
-  "short_name": "ARIA",
+  "name": "Auto Lavaggio",
+  "short_name": "Auto Lavaggio",
   "description": "Cockpit Autolavaggio by LIORA",
   "start_url": "/aria/login",
   "scope": "/aria",
