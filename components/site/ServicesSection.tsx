@@ -7,6 +7,7 @@ const services = [
   {
     name: "Extérieur Seul",
     price: "65$",
+    priceTax: "avant taxes",
     duration: "45 min",
     priceSub: null,
     features: [
@@ -19,6 +20,7 @@ const services = [
   {
     name: "Intérieur Seul",
     price: "70$",
+    priceTax: "avant taxes",
     duration: "60 min",
     priceSub: "+15$ pour VUS",
     features: [
@@ -31,6 +33,7 @@ const services = [
   {
     name: "Service Complet",
     price: "99$",
+    priceTax: "avant taxes",
     duration: "90 min",
     priceSub: "+20$ pour VUS",
     features: [
@@ -104,6 +107,11 @@ export default function ServicesSection() {
                 {service.priceSub && (
                   <span className="text-aria-muted text-sm ml-2 font-sans">
                     {service.priceSub}
+                  </span>
+                )}
+                {service.priceTax && (
+                  <span className="text-aria-muted text-xs font-sans block mt-0.5">
+                    {service.priceTax}
                   </span>
                 )}
               </div>
