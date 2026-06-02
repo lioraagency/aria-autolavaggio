@@ -140,7 +140,7 @@ export default function ServicesSection() {
           {supplements.map((s) => (
             <span
               key={s}
-              className="bg-aria-elevated border border-[rgba(255,255,255,0.06)] rounded-full px-4 py-2 text-sm text-aria-muted font-condensed uppercase"
+              className="bg-aria-accent/10 border border-aria-accent/40 rounded-full px-4 py-2 text-sm text-aria-accent font-condensed uppercase"
             >
               {s}
             </span>
