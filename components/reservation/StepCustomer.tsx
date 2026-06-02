@@ -120,33 +120,6 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
 
       <div className="flex flex-col gap-3">
         <label className="flex items-start gap-3 cursor-pointer">
-          <div
-            className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-              state.smsOptIn
-                ? 'bg-aria-accent border-aria-accent'
-                : 'border-[rgba(255,255,255,0.12)] bg-aria-surface'
-            }`}
-            onClick={() => onChange({ smsOptIn: !state.smsOptIn })}
-          >
-            {state.smsOptIn && (
-              <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
-                <path d="M2 6l3 3 5-5" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-          </div>
-          <input
-            type="checkbox"
-            name="smsOptIn"
-            className="sr-only"
-            checked={state.smsOptIn}
-            onChange={() => onChange({ smsOptIn: !state.smsOptIn })}
-          />
-          <span className="text-aria-text font-sans text-sm leading-relaxed">
-            Je veux recevoir un SMS de confirmation et un rappel
-          </span>
-        </label>
-
-        <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
             name="isFirstVisit"
