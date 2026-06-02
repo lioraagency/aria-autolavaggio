@@ -4,20 +4,22 @@ import { useEffect, useRef } from "react";
 
 const testimonials = [
   {
-    author: "Martin T.",
+    name: "Mathias Tremblay-Ferland",
     service: "Service Complet",
-    quote: "Mon VUS avait l'air neuf en sortant. Service impeccable.",
+    text: "Super service de Raphael et Prudent, ma voiture neuve n'était même pas propre comme ça quand je l'ai reçu ! Bravo, je vais retourner certainement.",
+    stars: 5,
   },
   {
-    author: "Sarah G.",
+    name: "Amélie Deradji",
     service: "Service Complet",
-    quote: "45 minutes et ma voiture était impeccable. Je reviendrai.",
+    text: "Super centre de lavage auto ! Les installations sont propres et le résultat est impeccable. Ma voiture ressort toujours nickel, aussi bien à l'extérieur qu'à l'intérieur. Je recommande sans hésiter !",
+    stars: 5,
   },
   {
-    author: "François R.",
+    name: "Steeve Beaulieu",
     service: "Extérieur",
-    quote:
-      "Les machines automatiques manquent toujours des endroits — ici, rien n'est oublié.",
+    text: "Je suis allé laver ma 911 la semaine passée — super travail ! Petit dîner chez Matto pour patienter 👍",
+    stars: 5,
   },
 ];
 
@@ -54,18 +56,18 @@ export default function Testimonials() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t) => (
             <div
-              key={t.author}
+              key={t.name}
               className="bg-aria-bg border border-[rgba(255,255,255,0.06)] rounded-2xl p-6"
             >
               <div className="text-aria-accent text-sm tracking-widest">★★★★★</div>
 
               <p className="text-aria-text font-sans italic text-base leading-relaxed mt-3">
-                &ldquo;{t.quote}&rdquo;
+                &ldquo;{t.text}&rdquo;
               </p>
 
               <div className="border-t border-[rgba(255,255,255,0.06)] mt-4 pt-4">
                 <span className="text-aria-text font-condensed font-bold text-sm uppercase block">
-                  {t.author}
+                  {t.name}
                 </span>
                 <span className="text-aria-muted text-xs font-condensed">{t.service}</span>
               </div>

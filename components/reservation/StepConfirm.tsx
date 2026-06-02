@@ -147,7 +147,10 @@ export default function StepConfirm({ state, onBack }: StepProps) {
           </div>
         )}
         <div className="pt-2 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between">
-          <span className="text-aria-muted text-sm font-sans">Total</span>
+          <div className="flex flex-col">
+            <span className="text-aria-muted text-sm font-sans">Total</span>
+            <span className="text-aria-muted text-xs font-sans">avant taxes</span>
+          </div>
           <span className="text-aria-accent font-condensed font-black text-2xl">{totalDisplay} $</span>
         </div>
       </div>
