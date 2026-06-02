@@ -147,20 +147,6 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
         </label>
 
         <label className="flex items-start gap-3 cursor-pointer">
-          <div
-            className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-              state.isFirstVisit
-                ? 'bg-aria-accent border-aria-accent'
-                : 'border-[rgba(255,255,255,0.12)] bg-aria-surface'
-            }`}
-            onClick={() => onChange({ isFirstVisit: !state.isFirstVisit })}
-          >
-            {state.isFirstVisit && (
-              <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
-                <path d="M2 6l3 3 5-5" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-          </div>
           <input
             type="checkbox"
             name="isFirstVisit"
@@ -168,6 +154,19 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
             checked={state.isFirstVisit}
             onChange={() => onChange({ isFirstVisit: !state.isFirstVisit })}
           />
+          <div
+            className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+              state.isFirstVisit
+                ? 'bg-aria-accent border-aria-accent'
+                : 'border-[rgba(255,255,255,0.12)] bg-aria-surface'
+            }`}
+          >
+            {state.isFirstVisit && (
+              <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
+                <path d="M2 6l3 3 5-5" stroke="#0A0A0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </div>
           <span className="text-aria-text font-sans text-sm leading-relaxed">
             Première visite chez Autolavaggio
           </span>
