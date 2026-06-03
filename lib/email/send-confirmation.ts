@@ -137,10 +137,8 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
 
   const html = `
     <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;background:#fff">
-      <div style="background:#0A0A0A;padding:24px 28px;display:flex;align-items:center;gap:10px">
-        <span style="font-weight:900;font-size:20px;letter-spacing:2px;color:#fff">LIORA</span>
-        <span style="color:#D5FC96;font-weight:900;font-size:20px">×</span>
-        <span style="color:#fff;font-size:13px;letter-spacing:1px">AUTOLAVAGGIO</span>
+      <div style="background:#0A0A0A;padding:24px 28px;text-align:center">
+        <img src="https://aria-autolavaggio.vercel.app/logo-autolavaggio.png" alt="Autolavaggio" style="height:56px;width:auto" />
       </div>
       <div style="background:#111;padding:32px 28px 24px">
         <div style="color:#D5FC96;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px">Réservation confirmée</div>
@@ -168,7 +166,8 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
       </div>
       <div style="padding:22px 28px">
         <p style="font-size:13px;color:#888;line-height:1.6">Des questions? Appelez-nous directement.</p>
-        <p style="font-size:11px;color:#ccc;margin-top:14px">LIORA × Autolavaggio · Sainte-Foy, Québec</p>
+        <p style="font-size:11px;color:#ccc;margin-top:14px">Autolavaggio · Sainte-Foy, Québec</p>
+        <p style="font-size:10px;color:#ccc;margin-top:8px">Propulsé par <a href="https://liora.services" style="color:#999;text-decoration:none">LIORA</a></p>
       </div>
     </div>
   `
