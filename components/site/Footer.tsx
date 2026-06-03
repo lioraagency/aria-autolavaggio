@@ -14,16 +14,16 @@ export default function Footer() {
           </Link>
 
           <nav className="flex flex-wrap gap-6">
-            <a href="#services" className="text-aria-muted hover:text-aria-text text-sm font-condensed uppercase tracking-wider transition-colors">
+            <a href="#services" className="text-aria-text text-sm font-sans hover:text-aria-accent transition-colors">
               Services
             </a>
-            <a href="#comment-ca-marche" className="text-aria-muted hover:text-aria-text text-sm font-condensed uppercase tracking-wider transition-colors">
+            <a href="#comment-ca-marche" className="text-aria-text text-sm font-sans hover:text-aria-accent transition-colors">
               Comment ça marche
             </a>
-            <a href="#avis" className="text-aria-muted hover:text-aria-text text-sm font-condensed uppercase tracking-wider transition-colors">
+            <a href="#avis" className="text-aria-text text-sm font-sans hover:text-aria-accent transition-colors">
               Avis
             </a>
-            <a href="#contact" className="text-aria-muted hover:text-aria-text text-sm font-condensed uppercase tracking-wider transition-colors">
+            <a href="#contact" className="text-aria-text text-sm font-sans hover:text-aria-accent transition-colors">
               Contact
             </a>
             <Link href="/reservation" className="text-aria-accent font-condensed uppercase tracking-wider text-sm hover:underline transition-colors">

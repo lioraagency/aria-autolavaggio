@@ -22,7 +22,7 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 h-24 transition-all duration-300 ${
         scrolled
           ? "bg-aria-bg/95 backdrop-blur-md border-b border-[rgba(255,255,255,0.06)]"
           : "bg-transparent"
@@ -34,7 +34,7 @@ export default function Nav() {
           <img
             src="/logo-autolavaggio.png"
             alt="Autolavaggio"
-            className="h-14 w-auto object-contain"
+            className="h-16 w-auto object-contain"
           />
         </Link>
 
