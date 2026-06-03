@@ -44,7 +44,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-white/80 hover:text-aria-accent text-sm font-condensed uppercase tracking-widest transition-colors duration-200 hover:drop-shadow-[0_0_8px_rgba(213,252,150,0.6)]"
+              className="text-white hover:text-aria-accent text-sm font-condensed uppercase tracking-widest transition-colors duration-200 hover:drop-shadow-[0_0_8px_rgba(213,252,150,0.6)]"
             >
               {link.label}
             </a>
