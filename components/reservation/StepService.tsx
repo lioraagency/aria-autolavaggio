@@ -1,7 +1,8 @@
 'use client'
 
 import type { ChangeEvent } from 'react'
-import { ServiceType, SERVICE_PRICES, SERVICE_DURATIONS } from '@/lib/types'
+import { ServiceType, SERVICE_DURATIONS } from '@/lib/types'
+import { SUPPLEMENTS, computeTotal } from '@/lib/pricing'
 
 interface BookingFormState {
   serviceType: ServiceType | null
@@ -40,25 +41,11 @@ const SERVICES: { key: ServiceType; label: string; price: number; duration: numb
   { key: 'complete', label: 'Service Complet', price: 9900, duration: 90, sub: '+20$ pour VUS', badge: 'Recommandé' },
 ]
 
-const SUPPLEMENTS = [
-  { key: 'calcium', label: 'Traitement calcium (+20$)', amount: 2000 },
-  { key: 'moteur', label: 'Shampoing moteur (+35$)', amount: 3500 },
-]
-
-function computeTotal(serviceType: ServiceType | null, supplements: string[]): number {
-  if (!serviceType) return 0
-  const base = SERVICE_PRICES[serviceType]
-  const extra = supplements.reduce((sum, s) => {
-    const sup = SUPPLEMENTS.find(x => x.key === s)
-    return sum + (sup ? sup.amount : 0)
-  }, 0)
-  return base + extra
-}
 
 export default function StepService({ state, onChange, onNext }: StepProps) {
   function handleServiceSelect(key: ServiceType) {
     const newSupplements = state.supplements
-    const total = computeTotal(key, newSupplements)
+    const total = computeTotal(key, newSupplements, state.vehicleType)
     onChange({ serviceType: key, totalPrice: total })
   }
 
@@ -70,7 +57,7 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
         : prev.supplements.filter(s => s !== key)
       return {
         supplements: newSupplements,
-        totalPrice: computeTotal(prev.serviceType, newSupplements),
+        totalPrice: computeTotal(prev.serviceType, newSupplements, prev.vehicleType),
       }
     })
   }

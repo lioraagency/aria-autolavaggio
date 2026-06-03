@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { VehicleType } from '@/lib/types'
+import { computeTotal } from '@/lib/pricing'
 
 interface BookingFormState {
   serviceType: 'exterior' | 'interior' | 'complete' | null
@@ -46,7 +47,7 @@ const COLORS: { label: string; dot: string }[] = [
   { label: 'Rouge', dot: '#CC3333' },
   { label: 'Bleu', dot: '#3366CC' },
   { label: 'Vert', dot: '#336633' },
-  { label: 'Autre', dot: '#D4FF3F' },
+  { label: 'Autre', dot: '#D5FC96' },
 ]
 
 const TOP_SELLERS = ['Toyota','Honda','Ford','GMC','Mazda','Hyundai','Kia','Volkswagen','Subaru','Nissan','Chevrolet','Tesla','Volvo','Mitsubishi','Ram','Jeep','Dodge']
@@ -88,7 +89,10 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
 
   function handleChipSelect(chip: { label: string; value: VehicleType }) {
     setSelectedChipLabel(chip.label)
-    onChange({ vehicleType: chip.value })
+    onChange({
+      vehicleType: chip.value,
+      totalPrice: computeTotal(state.serviceType, state.supplements, chip.value),
+    })
   }
 
   const canProceed = state.vehicleMake.trim().length > 0 && state.vehicleModel.trim().length > 0
@@ -174,12 +178,12 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
                         className="px-4 py-2.5 cursor-pointer font-sans text-sm transition-colors"
                         style={{
                           color: state.vehicleMake === make ? '#0A0A0A' : 'rgba(255,255,255,0.80)',
-                          background: state.vehicleMake === make ? '#D4FF3F' : 'transparent',
+                          background: state.vehicleMake === make ? '#D5FC96' : 'transparent',
                         }}
                         onMouseEnter={e => {
                           if (state.vehicleMake !== make) {
                             (e.currentTarget as HTMLElement).style.background = 'rgba(212,255,63,0.12)'
-                            ;(e.currentTarget as HTMLElement).style.color = '#D4FF3F'
+                            ;(e.currentTarget as HTMLElement).style.color = '#D5FC96'
                           }
                         }}
                         onMouseLeave={e => {
