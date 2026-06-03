@@ -167,7 +167,7 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
       <div style="padding:22px 28px">
         <p style="font-size:13px;color:#888;line-height:1.6">Des questions? Appelez-nous directement.</p>
         <p style="font-size:11px;color:#ccc;margin-top:14px">Autolavaggio · Sainte-Foy, Québec</p>
-        <p style="font-size:10px;color:#ccc;margin-top:8px">Propulsé par <a href="https://liora.services" style="color:#999;text-decoration:none">LIORA</a></p>
+        <p style="font-size:10px;color:#ccc;margin-top:8px">Propulsé par <a href="https://liora.services" style="text-decoration:none"><img src="https://aria-autolavaggio.vercel.app/logo-liora.png" alt="LIORA" style="height:14px;width:auto;vertical-align:middle;opacity:0.6" /></a></p>
       </div>
     </div>
   `
