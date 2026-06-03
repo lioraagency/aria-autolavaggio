@@ -101,9 +101,11 @@ export default function StepConfirm({ state, onBack }: StepProps) {
       })
 
       if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string }
+        const body = (await res.json().catch(() => ({}))) as { error?: string; message?: string }
         const msg =
-          typeof body?.error === 'string' && body.error.length > 0
+          typeof body?.message === 'string' && body.message.length > 0
+            ? body.message
+            : typeof body?.error === 'string' && body.error.length > 0
             ? body.error
             : `Erreur ${res.status}`
         throw new Error(msg)

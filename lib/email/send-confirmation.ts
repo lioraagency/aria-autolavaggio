@@ -1,6 +1,10 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function getResend(): Resend {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
 
 const OWNER_EMAIL = process.env.OWNER_NOTIFICATION_EMAIL ?? ''
 
@@ -52,7 +56,7 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
 
   const html = `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111">
-      <h2 style="background:#0A0A0A;color:#D4FF3F;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">
+      <h2 style="background:#0A0A0A;color:#D5FC96;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">
         NOUVELLE RÉSERVATION — ${p.bookingNumber}
       </h2>
       <div style="padding:24px;border:1px solid #e5e5e5;border-top:none">
@@ -81,7 +85,7 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
     </div>
   `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: 'Auto Lavaggio <notifications@liora.services>',
     to: OWNER_EMAIL,
     subject: `🚗 Nouvelle réservation ${p.bookingNumber} — ${p.firstName} ${p.lastName} (${dateStr})`,
@@ -135,11 +139,11 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
     <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;background:#fff">
       <div style="background:#0A0A0A;padding:24px 28px;display:flex;align-items:center;gap:10px">
         <span style="font-weight:900;font-size:20px;letter-spacing:2px;color:#fff">LIORA</span>
-        <span style="color:#D4FF3F;font-weight:900;font-size:20px">×</span>
+        <span style="color:#D5FC96;font-weight:900;font-size:20px">×</span>
         <span style="color:#fff;font-size:13px;letter-spacing:1px">AUTOLAVAGGIO</span>
       </div>
       <div style="background:#111;padding:32px 28px 24px">
-        <div style="color:#D4FF3F;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px">Réservation confirmée</div>
+        <div style="color:#D5FC96;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px">Réservation confirmée</div>
         <div style="color:#fff;font-size:24px;font-weight:900;line-height:1.15">Bonjour ${p.firstName},<br>vous êtes attendu.</div>
         <div style="color:#666;font-size:12px;margin-top:8px">Confirmation N° ${p.bookingNumber}</div>
       </div>
@@ -169,7 +173,7 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
     </div>
   `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: 'Autolavaggio <notifications@liora.services>',
     to: p.email,
     subject: `✅ Réservation confirmée — ${dateStr}`,

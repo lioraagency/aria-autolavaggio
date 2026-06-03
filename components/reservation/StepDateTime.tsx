@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { VehicleType } from '@/lib/types'
 
 interface BookingFormState {
@@ -106,6 +106,34 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
     month: today.getMonth(),
   })
 
+  const [apiFullSlots, setApiFullSlots] = useState<string[]>([])
+  const [loadingSlots, setLoadingSlots] = useState(false)
+
+  useEffect(() => {
+    if (!state.date) {
+      setApiFullSlots([])
+      return
+    }
+    let cancelled = false
+    setLoadingSlots(true)
+    fetch(`/api/availability?date=${state.date}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled && Array.isArray(d.fullSlots)) {
+          setApiFullSlots(d.fullSlots)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setApiFullSlots([])
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingSlots(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [state.date])
+
   const baseMonth = { year: today.getFullYear(), month: today.getMonth() }
   const maxMonth = { year: today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear(), month: (today.getMonth() + 1) % 12 }
 
@@ -147,11 +175,9 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
   const selectedDow = selectedDate ? selectedDate.getDay() : null
   const slots = selectedDow !== null ? getTimeSlots(selectedDow) : []
 
-  const fullSlotsForDow = selectedDow !== null ? (MOCK_FULL_SLOTS[selectedDow] ?? []) : []
-
   const slotsWithFull = slots.map(s => ({
     ...s,
-    full: fullSlotsForDow.includes(s.time),
+    full: apiFullSlots.includes(s.time),
   }))
 
   const canProceed = state.date.length > 0 && state.time.length > 0

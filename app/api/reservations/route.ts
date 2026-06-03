@@ -178,6 +178,26 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const slotStart = new Date(scheduledAt)
+    slotStart.setMinutes(0, 0, 0)
+    const slotEnd = new Date(slotStart)
+    slotEnd.setHours(slotStart.getHours() + 1)
+
+    const { count: slotCount, error: slotErr } = await supabase
+      .from("reservations")
+      .select("id", { count: "exact", head: true })
+      .gte("scheduled_at", slotStart.toISOString())
+      .lt("scheduled_at", slotEnd.toISOString())
+      .neq("operational_status", "cancelled")
+
+    if (slotErr) {
+      return NextResponse.json({ error: "availability_check_failed" }, { status: 503 })
+    }
+
+    if ((slotCount ?? 0) >= 2) {
+      return NextResponse.json({ error: "slot_full", message: "Ce créneau vient d'être complété. Choisissez un autre horaire." }, { status: 409 })
+    }
+
     const { data: reservation, error: resErr } = await supabase
       .from("reservations")
       .insert({
