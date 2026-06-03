@@ -34,7 +34,7 @@ export default function Nav() {
           <img
             src="/logo-autolavaggio.png"
             alt="Autolavaggio"
-            className="h-20 w-auto"
+            className="h-14 w-auto object-contain"
           />
         </Link>
 
