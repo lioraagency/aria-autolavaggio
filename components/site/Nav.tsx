@@ -31,10 +31,11 @@ export default function Nav() {
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <span className="font-condensed font-black text-xl tracking-widest text-aria-text uppercase">
-            AUTOLAVAGGIO
-          </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-aria-accent ml-1 inline-block" />
+          <img
+            src="/logo-autolavaggio.png"
+            alt="Autolavaggio"
+            className="h-10 w-auto"
+          />
         </Link>
 
         {/* Desktop nav */}
