@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ServiceType, SERVICE_LABELS, VehicleType } from '@/lib/types'
+import { SUV_SURCHARGE_BY_SERVICE } from '@/lib/pricing'
 
 interface BookingFormState {
   serviceType: ServiceType | null
@@ -147,6 +148,11 @@ export default function StepConfirm({ state, onBack }: StepProps) {
               </span>
             ))}
           </div>
+        )}
+        {state.vehicleType === 'suv' && state.serviceType && (SUV_SURCHARGE_BY_SERVICE[state.serviceType] ?? 0) > 0 && (
+          <span className="text-aria-accent text-sm font-sans">
+            + Supplément VUS (+{(SUV_SURCHARGE_BY_SERVICE[state.serviceType] ?? 0) / 100}$)
+          </span>
         )}
         <div className="pt-2 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between">
           <div className="flex flex-col">
