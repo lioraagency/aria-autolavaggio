@@ -284,37 +284,39 @@ export async function POST(req: NextRequest) {
       console.error("[api/reservations] update customer stats:", updErr);
     }
 
-    // Send owner email — fire and forget, never block the response
-    sendOwnerConfirmation({
-      bookingNumber: bookingNumberFromId(reservationId),
-      firstName,
-      lastName,
-      phone,
-      email,
-      serviceType: st,
-      supplements,
-      scheduledAt: scheduledAt.toISOString(),
-      vehicleMake,
-      vehicleModel,
-      vehicleYear,
-      vehicleColor,
-      vehicleType,
-      totalPriceCents: priceCents,
-    }).catch(e => console.error('[email] owner notification failed:', e))
+    // Send emails — awaited so the serverless function doesn't freeze before Resend is called
+    await Promise.all([
+      sendOwnerConfirmation({
+        bookingNumber: bookingNumberFromId(reservationId),
+        firstName,
+        lastName,
+        phone,
+        email,
+        serviceType: st,
+        supplements,
+        scheduledAt: scheduledAt.toISOString(),
+        vehicleMake,
+        vehicleModel,
+        vehicleYear,
+        vehicleColor,
+        vehicleType,
+        totalPriceCents: priceCents,
+      }).catch(e => console.error('[email] owner notification failed:', e)),
 
-    sendClientConfirmation({
-      bookingNumber: bookingNumberFromId(reservationId),
-      firstName,
-      email: email ?? '',
-      serviceType: st,
-      supplements,
-      scheduledAt: scheduledAt.toISOString(),
-      vehicleMake,
-      vehicleModel,
-      vehicleYear,
-      vehicleColor,
-      totalPriceCents: priceCents,
-    }).catch(e => console.error('[email] client confirmation failed:', e))
+      sendClientConfirmation({
+        bookingNumber: bookingNumberFromId(reservationId),
+        firstName,
+        email: email ?? '',
+        serviceType: st,
+        supplements,
+        scheduledAt: scheduledAt.toISOString(),
+        vehicleMake,
+        vehicleModel,
+        vehicleYear,
+        vehicleColor,
+        totalPriceCents: priceCents,
+      }).catch(e => console.error('[email] client confirmation failed:', e)),
+    ])
 
     return NextResponse.json({
       success: true,
