@@ -36,6 +36,12 @@ function maskPhone(raw: string): string {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
 }
 
+function capitalizeName(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/(^|[\s\-'])([a-zà-ÿ])/g, (_, sep, char) => sep + char.toUpperCase())
+}
+
 export default function StepCustomer({ state, onChange, onNext, onBack }: StepProps) {
   const phoneDigits = state.phone.replace(/\D/g, '')
   const canProceed =
@@ -68,6 +74,7 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
             name="firstName"
             value={state.firstName}
             onChange={e => onChange({ firstName: e.target.value })}
+            onBlur={e => onChange({ firstName: capitalizeName(e.target.value) })}
             placeholder="Marie"
             className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
           />
@@ -82,6 +89,7 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
             name="lastName"
             value={state.lastName}
             onChange={e => onChange({ lastName: e.target.value })}
+            onBlur={e => onChange({ lastName: capitalizeName(e.target.value) })}
             placeholder="Tremblay"
             className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
           />
