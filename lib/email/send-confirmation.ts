@@ -137,8 +137,8 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
 
   const html = `
     <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;background:#fff">
-      <div style="background:#ffffff;padding:0;text-align:center">
-        <img src="https://aria-autolavaggio.vercel.app/banner-email-autolavaggio.png" alt="Autolavaggio" style="width:100%;max-width:560px;display:block" />
+      <div style="background:#ffffff;padding:20px 28px;text-align:center">
+        <img src="https://aria-autolavaggio.vercel.app/banner-email-autolavaggio.png" alt="Autolavaggio" style="height:120px;width:auto;display:block;margin:0 auto" />
       </div>
       <div style="background:#111;padding:32px 28px 24px">
         <div style="color:#D5FC96;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px">Réservation confirmée</div>
