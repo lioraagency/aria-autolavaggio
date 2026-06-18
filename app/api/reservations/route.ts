@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   if (!y || !mo || !d || !Number.isFinite(h) || !Number.isFinite(mi)) {
     return NextResponse.json({ success: false, error: "Date ou heure invalide." }, { status: 400 });
   }
-  const scheduledAt = new Date(y, mo - 1, d, h, mi, 0, 0);
+  const scheduledAt = new Date(`${date}T${time}:00`);
   if (Number.isNaN(scheduledAt.getTime())) {
     return NextResponse.json({ success: false, error: "Date ou heure invalide." }, { status: 400 });
   }
@@ -317,6 +317,34 @@ export async function POST(req: NextRequest) {
         totalPriceCents: priceCents,
       }).catch(e => console.error('[email] client confirmation failed:', e)),
     ])
+
+    // n8n webhook — Google Calendar sync
+    try {
+      await fetch("https://lioraservicesai.app.n8n.cloud/webhook/4a461815-8ee5-4a31-9d2b-9d480bea0857", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: reservationId,
+          scheduled_at: `${date}T${time}:00`,
+          estimated_duration_minutes: duration,
+          service_type: st,
+          vehicle_make: vehicleMake,
+          vehicle_model: vehicleModel,
+          vehicle_year: vehicleYear,
+          vehicle_color: vehicleColor,
+          price_cents: priceCents,
+          first_name: firstName,
+          last_name: lastName,
+          phone: phoneNorm,
+          supplements: supplements,
+          vehicle_type: vehicleType,
+          email: email,
+          booking_number: bookingNumberFromId(reservationId),
+        }),
+      });
+    } catch (e) {
+      console.error("[n8n] webhook failed:", e);
+    }
 
     return NextResponse.json({
       success: true,
