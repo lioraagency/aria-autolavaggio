@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ServiceType, SERVICE_LABELS, VehicleType } from '@/lib/types'
-import { SUV_SURCHARGE_BY_SERVICE } from '@/lib/pricing'
+import { SUV_SURCHARGE_BY_SERVICE, SUPPLEMENTS } from '@/lib/pricing'
 
 interface BookingFormState {
   serviceType: ServiceType | null
@@ -35,6 +35,7 @@ interface StepProps {
 const SUPPLEMENT_LABELS: Record<string, string> = {
   calcium: 'Traitement calcium',
   moteur: 'Shampoing moteur',
+  ceramique: 'Traitement céramique + décontamination',
 }
 
 const DOW_LABELS_FULL = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
@@ -143,11 +144,17 @@ export default function StepConfirm({ state, onBack }: StepProps) {
         </span>
         {state.supplements.length > 0 && (
           <div className="flex flex-col gap-1">
-            {state.supplements.map(s => (
-              <span key={s} className="text-aria-muted text-sm font-sans">
-                + {SUPPLEMENT_LABELS[s] ?? s}
-              </span>
-            ))}
+            {state.supplements.map(s => {
+              const sup = SUPPLEMENTS.find(x => x.key === s)
+              const amount = sup
+                ? (state.vehicleType === 'suv' && sup.amountBySuv ? sup.amountBySuv : sup.amount) / 100
+                : null
+              return (
+                <span key={s} className="text-aria-muted text-sm font-sans">
+                  + {SUPPLEMENT_LABELS[s] ?? s}{amount !== null ? ` (+${amount}$)` : ''}
+                </span>
+              )
+            })}
           </div>
         )}
         {state.vehicleType === 'suv' && state.serviceType && (SUV_SURCHARGE_BY_SERVICE[state.serviceType] ?? 0) > 0 && (
