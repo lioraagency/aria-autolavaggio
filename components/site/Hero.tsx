@@ -4,9 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 const stats = [
-  { value: "500+", label: "Véhicules lavés" },
+  { value: "2000+", label: "Véhicules lavés" },
   { value: "4.9 ★", label: "Satisfaction" },
-  { value: "0", label: "Temps d'attente" },
   { value: "100%", label: "Manuel · à la main" },
 ];
 
@@ -75,7 +74,7 @@ export default function Hero() {
       {/* Stats bar */}
       <div className="relative z-10 border-t border-[rgba(255,255,255,0.06)] bg-[#0A0A0A]/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-[rgba(255,255,255,0.06)]">
+          <div className="grid grid-cols-3 md:grid-cols-3 divide-x divide-[rgba(255,255,255,0.06)]">
             {stats.map((stat) => (
               <div
                 key={stat.label}
