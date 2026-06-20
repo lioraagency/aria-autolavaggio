@@ -48,8 +48,8 @@ const services = [
 ];
 
 const supplements = [
-  "Traitement calcium : +20$",
-  "Shampoing moteur : +35$",
+  "Traitement calcium : +25$",
+  "Shampoing moteur : +40$",
   "Demandes spéciales sur mesure",
 ];
 

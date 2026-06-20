@@ -123,8 +123,8 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
   }
 
   const SUPPLEMENT_FR: Record<string, string> = {
-    calcium: 'Traitement calcium (+20 $)',
-    moteur: 'Shampoing moteur (+35 $)',
+    calcium: 'Traitement calcium (+25 $)',
+    moteur: 'Shampoing moteur (+40 $)',
   }
 
   const totalDisplay = Math.round(p.totalPriceCents / 100)

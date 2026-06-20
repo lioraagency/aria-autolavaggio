@@ -7,8 +7,8 @@ export const SUV_SURCHARGE_BY_SERVICE: Record<string, number> = {
 }
 
 export const SUPPLEMENTS = [
-  { key: 'calcium', label: 'Traitement calcium (+20$)', amount: 2000 },
-  { key: 'moteur',  label: 'Shampoing moteur (+35$)',   amount: 3500 },
+  { key: 'calcium', label: 'Traitement calcium (+25$)', amount: 2500 },
+  { key: 'moteur',  label: 'Shampoing moteur (+40$)',   amount: 4000 },
 ]
 
 export function computeTotal(

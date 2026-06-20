@@ -52,7 +52,7 @@ export const ALERTS: Alert[] = [
     id: 'a5',
     type: 'demande',
     title: 'Demande spéciale',
-    body: 'Louis T. demande un shampoing moteur · +35$',
+    body: 'Louis T. demande un shampoing moteur · +40$',
     isRead: true,
     createdAt: new Date(Date.now() - 24 * 60 * 60_000 - 2 * 60 * 60_000),
   },
