@@ -270,7 +270,7 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
       {/* Notes */}
       <div className="flex flex-col gap-2">
         <label htmlFor="vehicleNotes" className="font-condensed font-black uppercase text-aria-muted text-sm tracking-wider">
-          Notes <span className="font-sans font-normal normal-case text-aria-dim">(optionnel)</span>
+          Demandes spéciales <span className="font-sans font-normal normal-case text-aria-dim">(optionnel)</span>
         </label>
         <textarea
           id="vehicleNotes"
