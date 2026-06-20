@@ -27,7 +27,7 @@ function ConfirmationContent() {
         <svg
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#D4FF3F"
+          stroke="#D5FC96"
           strokeWidth="2.5"
           strokeLinecap="round"
           className="w-10 h-10"
@@ -72,11 +72,6 @@ function ConfirmationContent() {
         Ajouter à mon calendrier
       </button>
 
-      {num && /\d/.test(num) && (
-        <p className="text-aria-muted text-xs mt-4 font-sans text-center">
-          Un SMS de confirmation vous sera envoyé.
-        </p>
-      )}
 
       <Link
         href="/"

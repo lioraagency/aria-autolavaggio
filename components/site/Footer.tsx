@@ -7,10 +7,7 @@ export default function Footer() {
         {/* Top row */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <Link href="/" className="flex items-center">
-            <span className="font-condensed font-black text-lg tracking-widest text-aria-text uppercase">
-              AUTOLAVAGGIO
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-aria-accent ml-1 inline-block" />
+            <img src="/logo-autolavaggio.png" alt="Autolavaggio" style={{height:'32px',width:'auto'}} />
           </Link>
 
           <nav className="flex flex-wrap gap-6">
@@ -37,9 +34,10 @@ export default function Footer() {
           <p className="text-aria-muted text-xs">
             © 2026 Autolavaggio. Tous droits réservés.
           </p>
-          <p className="text-[11px] opacity-40 text-aria-muted">
-            Propulsé par LIORA · liora.services
-          </p>
+          <a href="https://liora.services" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 opacity-40 hover:opacity-60 transition-opacity">
+            <span className="text-[11px] text-aria-muted">Propulsé par</span>
+            <img src="/logo-liora.png" alt="LIORA" style={{height:'16px',width:'auto'}} />
+          </a>
           <Link
             href="/aria/login"
             className="text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"

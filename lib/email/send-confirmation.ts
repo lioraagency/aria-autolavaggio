@@ -42,7 +42,8 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
     return
   }
 
-  const dateStr = new Date(p.scheduledAt).toLocaleString('fr-CA', {
+  const localDate = p.scheduledAt.includes('T') ? p.scheduledAt.split('.')[0] : p.scheduledAt
+  const dateStr = new Date(localDate + '-04:00').toLocaleString('fr-CA', {
     timeZone: 'America/Toronto',
     weekday: 'long', year: 'numeric', month: 'long',
     day: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -54,36 +55,7 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
 
   const totalDisplay = Math.round(p.totalPriceCents / 100)
 
-  const html = `
-    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111">
-      <h2 style="background:#0A0A0A;color:#D5FC96;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">
-        NOUVELLE RÉSERVATION — ${p.bookingNumber}
-      </h2>
-      <div style="padding:24px;border:1px solid #e5e5e5;border-top:none">
-        <table style="width:100%;border-collapse:collapse;font-size:14px">
-          <tr><td style="padding:8px 0;color:#666;width:140px">Client</td>
-              <td style="padding:8px 0;font-weight:600">${p.firstName} ${p.lastName}</td></tr>
-          <tr><td style="padding:8px 0;color:#666">Téléphone</td>
-              <td style="padding:8px 0">${p.phone}</td></tr>
-          <tr><td style="padding:8px 0;color:#666">Courriel</td>
-              <td style="padding:8px 0">${p.email ?? '—'}</td></tr>
-          <tr><td style="padding:8px 0;color:#666">Date</td>
-              <td style="padding:8px 0;font-weight:600;color:#0070f3">${dateStr}</td></tr>
-          <tr><td style="padding:8px 0;color:#666">Service</td>
-              <td style="padding:8px 0">${SERVICE_FR[p.serviceType] ?? p.serviceType}</td></tr>
-          <tr><td style="padding:8px 0;color:#666">Suppléments</td>
-              <td style="padding:8px 0">${supplementsLine}</td></tr>
-          <tr><td style="padding:8px 0;color:#666">Véhicule</td>
-              <td style="padding:8px 0">${p.vehicleMake} ${p.vehicleModel} ${p.vehicleYear} — ${p.vehicleColor}</td></tr>
-          <tr><td style="padding:8px 0;color:#666">Total</td>
-              <td style="padding:8px 0;font-weight:700;font-size:16px">${totalDisplay} $</td></tr>
-        </table>
-      </div>
-      <div style="padding:12px 24px;background:#f9f9f9;font-size:12px;color:#999">
-        Auto Lavaggio — Généré automatiquement
-      </div>
-    </div>
-  `
+  const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111"><h2 style="background:#0A0A0A;color:#D5FC96;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">NOUVELLE RÉSERVATION — ${p.bookingNumber}</h2><div style="padding:24px;border:1px solid #e5e5e5;border-top:none"><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><td style="padding:8px 0;color:#666;width:140px">Client</td><td style="padding:8px 0;font-weight:600">${p.firstName} ${p.lastName}</td></tr><tr><td style="padding:8px 0;color:#666">Téléphone</td><td style="padding:8px 0">${p.phone}</td></tr><tr><td style="padding:8px 0;color:#666">Courriel</td><td style="padding:8px 0">${p.email ?? '—'}</td></tr><tr><td style="padding:8px 0;color:#666">Date</td><td style="padding:8px 0;font-weight:600;color:#0070f3">${dateStr}</td></tr><tr><td style="padding:8px 0;color:#666">Service</td><td style="padding:8px 0">${SERVICE_FR[p.serviceType] ?? p.serviceType}</td></tr><tr><td style="padding:8px 0;color:#666">Suppléments</td><td style="padding:8px 0">${supplementsLine}</td></tr><tr><td style="padding:8px 0;color:#666">Véhicule</td><td style="padding:8px 0">${p.vehicleMake} ${p.vehicleModel} ${p.vehicleYear} — ${p.vehicleColor}</td></tr><tr><td style="padding:8px 0;color:#666">Total</td><td style="padding:8px 0;font-weight:700;font-size:16px">${totalDisplay} $</td></tr></table></div><div style="padding:12px 24px;background:#f9f9f9;font-size:12px;color:#999">Auto Lavaggio — Généré automatiquement</div></div>`
 
   await getResend().emails.send({
     from: 'Auto Lavaggio <notifications@liora.services>',
@@ -110,7 +82,8 @@ export interface ClientEmailPayload {
 export async function sendClientConfirmation(p: ClientEmailPayload): Promise<void> {
   if (!p.email) return
 
-  const dateStr = new Date(p.scheduledAt).toLocaleString('fr-CA', {
+  const localDate = p.scheduledAt.includes('T') ? p.scheduledAt.split('.')[0] : p.scheduledAt
+  const dateStr = new Date(localDate + '-04:00').toLocaleString('fr-CA', {
     timeZone: 'America/Toronto',
     weekday: 'long', year: 'numeric', month: 'long',
     day: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -137,8 +110,8 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
 
   const html = `
     <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;background:#fff">
-      <div style="background:#ffffff;padding:20px 28px;text-align:center">
-        <img src="https://aria-autolavaggio.vercel.app/banner-email-autolavaggio-opt.jpg" alt="Autolavaggio" style="width:100%;max-width:320px;height:auto;display:block;margin:0 auto" />
+      <div style="background:#ffffff;padding:0;text-align:center">
+        <img src="https://aria-autolavaggio.vercel.app/assets/logo-autolavaggio.png" alt="Autolavaggio" width="400" style="display:block;margin:0 auto" />
       </div>
       <div style="background:#111;padding:32px 28px 24px">
         <div style="color:#D5FC96;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px">Réservation confirmée</div>
