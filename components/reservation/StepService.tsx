@@ -1,14 +1,14 @@
 'use client'
 
 import type { ChangeEvent } from 'react'
-import { ServiceType, SERVICE_DURATIONS } from '@/lib/types'
+import { ServiceType, VehicleType, SERVICE_DURATIONS } from '@/lib/types'
 import { SUPPLEMENTS, computeTotal } from '@/lib/pricing'
 
 interface BookingFormState {
   serviceType: ServiceType | null
   supplements: string[]
   totalPrice: number
-  vehicleType: 'sedan' | 'suv' | 'truck' | 'compact'
+  vehicleType: VehicleType
   vehicleMake: string
   vehicleModel: string
   vehicleYear: number

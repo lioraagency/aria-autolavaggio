@@ -61,10 +61,11 @@ function maskPhone(raw: string): string {
 }
 
 const VEHICLE_TYPE_LABELS: Record<VehicleType, string> = {
-  sedan: 'Berline',
-  suv: 'VUS',
-  truck: 'Pickup',
-  compact: 'Compacte',
+  sedan:       'Berline',
+  suv_compact: 'VUS compact',
+  suv:         'VUS',
+  truck:       'Pickup',
+  compact:     'Compacte',
 }
 
 export default function StepConfirm({ state, onBack }: StepProps) {

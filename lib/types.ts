@@ -17,7 +17,7 @@ export type PaymentStatus =
 
 export type ServiceType = 'exterior' | 'interior' | 'complete'
 
-export type VehicleType = 'sedan' | 'suv' | 'truck' | 'compact'
+export type VehicleType = 'sedan' | 'suv' | 'suv_compact' | 'truck' | 'compact'
 
 export interface Vehicle {
   id: string
@@ -111,7 +111,7 @@ export const OPERATIONAL_PIPELINE: OperationalStatus[] = [
 export const STATUS_COLORS: Record<OperationalStatus, string> = {
   scheduled:     '#8A8A8A',
   arrived:       '#0A84FF',
-  in_progress:   '#D4FF3F',
+  in_progress:   '#D5FC96',
   drying:        '#64D2FF',
   quality_check: '#FF9F0A',
   ready:         '#30D158',

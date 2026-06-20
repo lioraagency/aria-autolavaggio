@@ -18,7 +18,9 @@ export function computeTotal(
 ): number {
   if (!serviceType) return 0
   const base = SERVICE_PRICES[serviceType]
-  const suvExtra = vehicleType === 'suv' ? (SUV_SURCHARGE_BY_SERVICE[serviceType] ?? 0) : 0
+  const suvExtra = (vehicleType === 'suv' || vehicleType === 'truck')
+    ? (SUV_SURCHARGE_BY_SERVICE[serviceType] ?? 0)
+    : 0
   const extra = supplements.reduce((sum, s) => {
     const sup = SUPPLEMENTS.find(x => x.key === s)
     return sum + (sup ? sup.amount : 0)

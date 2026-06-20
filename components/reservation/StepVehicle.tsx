@@ -32,11 +32,10 @@ interface StepProps {
 }
 
 const VEHICLE_CHIPS: { label: string; value: VehicleType }[] = [
-  { label: 'Berline', value: 'sedan' },
-  { label: 'VUS Compact', value: 'suv' },
-  { label: 'VUS', value: 'suv' },
-  { label: 'Pickup', value: 'truck' },
-  { label: 'Compacte', value: 'compact' },
+  { label: 'Berline',     value: 'sedan'      },
+  { label: 'VUS compact', value: 'suv_compact' },
+  { label: 'VUS',         value: 'suv'         },
+  { label: 'Pick-up',     value: 'truck'       },
 ]
 
 const COLORS: { label: string; dot: string }[] = [
@@ -60,10 +59,11 @@ const MAKES_GROUPS: MakeGroup[] = [
 ]
 
 const INITIAL_CHIP_FOR_TYPE: Record<VehicleType, string> = {
-  sedan: 'Berline',
-  suv: 'VUS',
-  truck: 'Pickup',
-  compact: 'Compacte',
+  sedan:       'Berline',
+  suv_compact: 'VUS compact',
+  suv:         'VUS',
+  truck:       'Pick-up',
+  compact:     'Berline',
 }
 
 export default function StepVehicle({ state, onChange, onNext, onBack }: StepProps) {
