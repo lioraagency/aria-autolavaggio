@@ -12,8 +12,8 @@ interface StatusPipelineProps {
   compact?: boolean
 }
 
-const ACCENT = "#D4FF3F"
-const ACCENT_DIM = "#D4FF3F66" // 40% opacity
+const ACCENT = "#D5FC96"
+const ACCENT_DIM = "#D5FC9666" // 40% opacity
 const STEP_DIM = "#5A5A5A"
 const DANGER = "#FF453A"
 

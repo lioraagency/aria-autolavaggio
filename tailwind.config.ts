@@ -15,7 +15,7 @@ const config: Config = {
           elevated:         "#1A1A1A",
           border:           "rgba(255,255,255,0.06)",
           "border-strong":  "rgba(255,255,255,0.12)",
-          accent:           "#D4FF3F",
+          accent:           "#D5FC96",
           "accent-dim":     "rgba(212,255,63,0.12)",
           "accent-bd":      "rgba(212,255,63,0.25)",
           text:             "#F5F5F5",
