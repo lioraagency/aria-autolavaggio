@@ -15,13 +15,13 @@ export default function Hero() {
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/a45bb8bc-f440-43a3-95fb-6e47c7efa2fc.webp"
+          src="/images/hero-car-black.jpg"
           alt="Porsche GT4 — Autolavaggio"
           fill
           priority
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-[#0A0A0A]/70" />
+        <div className="absolute inset-0 bg-[#0A0A0A]/45" />
       </div>
 
       {/* Content */}
