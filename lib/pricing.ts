@@ -6,9 +6,12 @@ export const SUV_SURCHARGE_BY_SERVICE: Record<string, number> = {
   complete: 2000,
 }
 
-export const SUPPLEMENTS = [
-  { key: 'calcium', label: 'Traitement calcium (+25$)', amount: 2500 },
-  { key: 'moteur',  label: 'Shampoing moteur (+40$)',   amount: 4000 },
+type Supplement = { key: string; label: string; amount: number; amountBySuv?: number }
+
+export const SUPPLEMENTS: Supplement[] = [
+  { key: 'calcium',   label: 'Traitement calcium (+25$)',                                   amount: 2500 },
+  { key: 'moteur',    label: 'Shampoing moteur (+40$)',                                     amount: 4000 },
+  { key: 'ceramique', label: 'Traitement céramique + décontamination (+219$ / +299$ VUS)', amount: 21900, amountBySuv: 29900 },
 ]
 
 export function computeTotal(
@@ -23,7 +26,9 @@ export function computeTotal(
     : 0
   const extra = supplements.reduce((sum, s) => {
     const sup = SUPPLEMENTS.find(x => x.key === s)
-    return sum + (sup ? sup.amount : 0)
+    if (!sup) return sum
+    const isSuv = vehicleType === 'suv'
+    return sum + (isSuv && sup.amountBySuv ? sup.amountBySuv : sup.amount)
   }, 0)
   return base + extra + suvExtra
 }
