@@ -1,8 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ServiceType, VehicleType } from '@/lib/types'
+import { computeTotal } from '@/lib/pricing'
+import { SLUG_TO_SERVICE_TYPE } from '@/lib/config'
 import StepService from '@/components/reservation/StepService'
 import StepVehicle from '@/components/reservation/StepVehicle'
 import StepDateTime from '@/components/reservation/StepDateTime'
@@ -57,9 +60,17 @@ const STEP_LABELS = [
   'Confirmation',
 ]
 
-export default function ReservationPage() {
+function ReservationContent() {
+  const searchParams = useSearchParams()
+  const slug = searchParams.get('service') ?? ''
+  const preselectedService: ServiceType | null = SLUG_TO_SERVICE_TYPE[slug] ?? null
+
   const [currentStep, setCurrentStep] = useState(1)
-  const [formState, setFormState] = useState<BookingFormState>(INITIAL_STATE)
+  const [formState, setFormState] = useState<BookingFormState>(() => ({
+    ...INITIAL_STATE,
+    serviceType: preselectedService,
+    totalPrice: computeTotal(preselectedService, [], INITIAL_STATE.vehicleType),
+  }))
 
   function handleChange(
     updates: Partial<BookingFormState> | ((prev: BookingFormState) => Partial<BookingFormState>)
@@ -144,5 +155,13 @@ export default function ReservationPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ReservationPage() {
+  return (
+    <Suspense>
+      <ReservationContent />
+    </Suspense>
   )
 }

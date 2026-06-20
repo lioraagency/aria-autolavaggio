@@ -6,6 +6,7 @@ import Link from "next/link";
 const services = [
   {
     name: "Extérieur Seul",
+    slug: "exterieur",
     price: "65$",
     priceTax: "avant taxes",
     duration: "45 min",
@@ -19,6 +20,7 @@ const services = [
   },
   {
     name: "Intérieur Seul",
+    slug: "interieur",
     price: "70$",
     priceTax: "avant taxes",
     duration: "60 min",
@@ -32,6 +34,7 @@ const services = [
   },
   {
     name: "Service Complet",
+    slug: "complet",
     price: "99$",
     priceTax: "avant taxes",
     duration: "90 min",
@@ -126,7 +129,7 @@ export default function ServicesSection() {
               </ul>
 
               <Link
-                href="/reservation"
+                href={`/reservation?service=${service.slug}`}
                 className="inline-block text-aria-accent text-sm font-condensed uppercase tracking-wider mt-6 hover:underline"
               >
                 Réserver ce service →

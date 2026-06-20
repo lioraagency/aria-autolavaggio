@@ -1,3 +1,5 @@
+import type { ServiceType } from '@/lib/types'
+
 export const CLIENT_NAME = process.env.CLIENT_NAME ?? "Autolavaggio";
 export const NEXT_PUBLIC_CLIENT_NAME = process.env.NEXT_PUBLIC_CLIENT_NAME ?? "Autolavaggio";
 
@@ -10,3 +12,9 @@ export const SERVICES = [
   { name: "Extérieur seul",    duration: 45, price: 65,  slug: "exterieur" },
   { name: "Intérieur seul",    duration: 60, price: 70,  slug: "interieur" },
 ] as const;
+
+export const SLUG_TO_SERVICE_TYPE: Record<string, ServiceType> = {
+  complet:   'complete',
+  exterieur: 'exterior',
+  interieur: 'interior',
+}
