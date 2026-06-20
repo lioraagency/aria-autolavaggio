@@ -51,7 +51,7 @@ function getTimeSlots(dow: number): { time: string; full: boolean }[] {
   const slots: { time: string; full: boolean }[] = []
   const lastSlotHour = hours.close - 1
   for (let h = hours.open; h < lastSlotHour; h++) {
-    for (const m of [0, 30]) {
+    for (const m of [0]) {
       const label = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
       slots.push({ time: label, full: false })
     }
@@ -107,6 +107,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
   })
 
   const [apiFullSlots, setApiFullSlots] = useState<string[]>([])
+  const [apiAvailableSlots, setApiAvailableSlots] = useState<string[] | null>(null)
   const [loadingSlots, setLoadingSlots] = useState(false)
 
   useEffect(() => {
@@ -115,12 +116,18 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
       return
     }
     let cancelled = false
+    setApiAvailableSlots(null)
     setLoadingSlots(true)
-    fetch(`/api/availability?date=${state.date}`)
+    fetch(`/api/availability?date=${state.date}&service=${state.serviceType ?? "complete"}`)
       .then((r) => r.json())
       .then((d) => {
-        if (!cancelled && Array.isArray(d.fullSlots)) {
-          setApiFullSlots(d.fullSlots)
+        if (!cancelled) {
+          if (Array.isArray(d.availableSlots)) {
+            setApiAvailableSlots(d.availableSlots)
+          }
+          if (Array.isArray(d.fullSlots)) {
+            setApiFullSlots(d.fullSlots)
+          }
         }
       })
       .catch(() => {
@@ -135,7 +142,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
   }, [state.date])
 
   const baseMonth = { year: today.getFullYear(), month: today.getMonth() }
-  const maxMonth = { year: today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear(), month: (today.getMonth() + 1) % 12 }
+  const maxMonth = { year: today.getMonth() >= 10 ? today.getFullYear() + 1 : today.getFullYear(), month: (today.getMonth() + 2) % 12 }
 
   function canGoPrev() {
     return displayMonth.year > baseMonth.year || displayMonth.month > baseMonth.month
@@ -175,10 +182,12 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
   const selectedDow = selectedDate ? selectedDate.getDay() : null
   const slots = selectedDow !== null ? getTimeSlots(selectedDow) : []
 
-  const slotsWithFull = slots.map(s => ({
-    ...s,
-    full: apiFullSlots.includes(s.time),
-  }))
+  const slotsWithFull = slots
+    .filter(s => apiAvailableSlots === null || apiAvailableSlots.includes(s.time))
+    .map(s => ({
+      ...s,
+      full: apiFullSlots.includes(s.time),
+    }))
 
   const canProceed = state.date.length > 0 && state.time.length > 0
 
