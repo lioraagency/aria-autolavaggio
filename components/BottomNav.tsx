@@ -48,6 +48,9 @@ const NAV_ITEMS = [
 export default function BottomNav() {
   const pathname = usePathname();
 
+  // /aria/dispo est une page autonome (auth propre) : pas de navigation cockpit
+  if (pathname.startsWith("/aria/dispo")) return null;
+
   const isActive = (href: string) =>
     href === "/aria" ? pathname === "/aria" : pathname.startsWith(href);
 

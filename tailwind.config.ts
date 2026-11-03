@@ -76,6 +76,22 @@ const config: Config = {
           from: { opacity: "1", transform: "translateY(0)" },
           to:   { opacity: "0", transform: "translateY(-16px)" },
         },
+        // /aria/dispo : coche de confirmation (apparaît, tient, s'efface)
+        "check-flash": {
+          "0%":   { opacity: "0", transform: "scale(0.9)" },
+          "20%":  { opacity: "1", transform: "scale(1)" },
+          "70%":  { opacity: "1", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(1)" },
+        },
+        // /aria/dispo : changement de mois dans le sens de la flèche
+        "month-next": {
+          from: { opacity: "0", transform: "translateX(12px)" },
+          to:   { opacity: "1", transform: "translateX(0)" },
+        },
+        "month-prev": {
+          from: { opacity: "0", transform: "translateX(-12px)" },
+          to:   { opacity: "1", transform: "translateX(0)" },
+        },
       },
       animation: {
         shake:          "shake 0.4s ease-out",
@@ -88,6 +104,9 @@ const config: Config = {
         "glow-green":   "glow-green 2s ease-in-out infinite",
         "toast-in":     "toast-in 0.25s ease-out forwards",
         "toast-out":    "toast-out 0.25s ease-in forwards",
+        "check-flash":  "check-flash 600ms cubic-bezier(0.23, 1, 0.32, 1) forwards",
+        "month-next":   "month-next 200ms cubic-bezier(0.23, 1, 0.32, 1)",
+        "month-prev":   "month-prev 200ms cubic-bezier(0.23, 1, 0.32, 1)",
       },
     },
   },
