@@ -1,4 +1,4 @@
-const CACHE_NAME = "aria-v0.1";
+const CACHE_NAME = "aria-v0.2"; // v0.2 : purge du cache v0.1 (réponses Supabase et pages périmées)
 const STATIC_ASSETS = [
   "/aria/login",
   "/manifest.json",
@@ -21,20 +21,37 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // Network-first for API routes
-  if (event.request.url.includes("/api/")) {
+  // Réseau direct : routes API, requêtes non-GET, et autres domaines (Supabase)
+  const url = new URL(event.request.url);
+  if (
+    event.request.url.includes("/api/") ||
+    event.request.method !== "GET" ||
+    url.origin !== self.location.origin
+  ) {
     return;
   }
-  // Cache-first for static assets
+
+  const putInCache = (res) => {
+    if (res.ok) {
+      const clone = res.clone();
+      caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+    }
+    return res;
+  };
+
+  // Fichiers versionnés de Next (nom unique par build) : cache d'abord, sans risque
+  if (url.pathname.startsWith("/_next/static/")) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => cached ?? fetch(event.request).then(putInCache))
+    );
+    return;
+  }
+
+  // Pages et autres fichiers : réseau d'abord (toujours la dernière version),
+  // cache seulement hors ligne
   event.respondWith(
-    caches.match(event.request).then((cached) =>
-      cached ?? fetch(event.request).then((res) => {
-        if (res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
-        }
-        return res;
-      })
-    )
+    fetch(event.request)
+      .then(putInCache)
+      .catch(() => caches.match(event.request).then((cached) => cached ?? Response.error()))
   );
 });
