@@ -90,6 +90,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Date ou heure invalide." }, { status: 400 });
   }
 
+  // Date bloquée par le propriétaire (/aria/dispo) : refus avant toute écriture
+  const { data: blockedRow, error: blockedErr } = await supabase
+    .from("blocked_dates")
+    .select("date")
+    .eq("date", date)
+    .maybeSingle();
+  if (blockedErr) {
+    return NextResponse.json({ error: "availability_check_failed" }, { status: 503 });
+  }
+  if (blockedRow) {
+    return NextResponse.json(
+      { error: "date_blocked", message: "Cette date n'est plus disponible. Choisissez une autre date." },
+      { status: 409 }
+    );
+  }
+
   const defaultPrice = SERVICE_PRICES[st];
   const priceCents =
     typeof totalPriceRaw === "number" && Number.isFinite(totalPriceRaw) && totalPriceRaw > 0

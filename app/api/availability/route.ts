@@ -26,6 +26,17 @@ export async function GET(req: NextRequest) {
     throw e;
   }
 
+  // Date bloquée par le propriétaire (/aria/dispo) : aucun créneau
+  const { data: blockedRow, error: blockedErr } = await supabase
+    .from("blocked_dates")
+    .select("date")
+    .eq("date", date)
+    .maybeSingle();
+  if (blockedErr) {
+    return NextResponse.json({ error: "db" }, { status: 500 });
+  }
+  const isBlocked = blockedRow !== null;
+
   // Bornes de la journée à l'heure du commerce, converties en UTC réel
   const dayStart = fromZonedTime(`${date}T00:00:00`, BUSINESS_TZ);
   const dayEnd = fromZonedTime(`${date}T23:59:59`, BUSINESS_TZ);
@@ -70,6 +81,7 @@ export async function GET(req: NextRequest) {
   const availableSlots = allSlots.filter((slot) => {
     const slotHour = parseInt(slot.split(":")[0]);
     if (!dayHours) return false;
+    if (isBlocked) return false;
     if (fullSlots.includes(slot)) return false;
     const [slotH, slotM] = slot.split(":").map(Number);
     const slotStartMinutes = slotH * 60 + slotM;
@@ -84,5 +96,5 @@ export async function GET(req: NextRequest) {
     return true;
   });
 
-  return NextResponse.json({ date, counts, fullSlots, availableSlots, maxPerSlot: MAX_PER_SLOT });
+  return NextResponse.json({ date, blocked: isBlocked, counts, fullSlots, availableSlots, maxPerSlot: MAX_PER_SLOT });
 }
