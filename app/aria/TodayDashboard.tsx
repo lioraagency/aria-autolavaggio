@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import type { Booking, OperationalStatus, Customer, Vehicle } from "@/lib/types";
 import { getNextStatus, centsToDisplay } from "@/lib/types";
+import { BUSINESS_TZ } from "@/lib/time";
 import { getCustomer, getVehicle } from "@/lib/mock-data";
 import StatCard from "@/components/StatCard";
 import BookingCard from "@/components/BookingCard";
@@ -112,7 +113,7 @@ export default function TodayDashboard({ initialBookings, stats: initialStats, c
     : undefined;
 
   const nextTime = nextRdv
-    ? nextRdv.scheduledAt.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit', hour12: false })
+    ? nextRdv.scheduledAt.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: BUSINESS_TZ })
     : null;
 
   return (
@@ -128,7 +129,7 @@ export default function TodayDashboard({ initialBookings, stats: initialStats, c
         {/* Date */}
         <div>
           <p className="font-condensed font-black text-[26px] uppercase text-aria-text tracking-tight leading-tight">
-            {new Date().toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' })}
+            {new Date().toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', timeZone: BUSINESS_TZ })}
           </p>
         </div>
 
