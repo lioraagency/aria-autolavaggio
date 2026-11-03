@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceSupabase, SupabaseConfigError } from "@/lib/supabase/service";
+import { fromZonedTime, formatInTimeZone } from "date-fns-tz";
+import { BUSINESS_TZ } from "@/lib/time";
 
 const MAX_PER_SLOT = 2;
 
@@ -23,8 +25,9 @@ export async function GET(req: NextRequest) {
     throw e;
   }
 
-  const dayStart = new Date(`${date}T00:00:00`);
-  const dayEnd = new Date(`${date}T23:59:59`);
+  // Bornes de la journée à l'heure du commerce, converties en UTC réel
+  const dayStart = fromZonedTime(`${date}T00:00:00`, BUSINESS_TZ);
+  const dayEnd = fromZonedTime(`${date}T23:59:59`, BUSINESS_TZ);
 
   const { data, error } = await supabase
     .from("reservations")
@@ -40,8 +43,8 @@ export async function GET(req: NextRequest) {
   const counts: Record<string, number> = {};
   for (const row of data ?? []) {
     const d = new Date(row.scheduled_at as string);
-    const hour = d.getHours();
-    const minutes = d.getMinutes();
+    const hour = Number(formatInTimeZone(d, BUSINESS_TZ, "H"));
+    const minutes = Number(formatInTimeZone(d, BUSINESS_TZ, "m"));
     const roundedMin = "00";
     const key = `${String(hour).padStart(2, "0")}:${roundedMin}`;
     counts[key] = (counts[key] ?? 0) + 1;
@@ -51,9 +54,9 @@ export async function GET(req: NextRequest) {
 
   const now = new Date();
   const requestedDate = new Date(`${date}T00:00:00`);
-  const isToday = now.toDateString() === requestedDate.toDateString();
-  const currentHour = now.getHours();
-  const currentMinutes = now.getMinutes();
+  const isToday = formatInTimeZone(now, BUSINESS_TZ, "yyyy-MM-dd") === date;
+  const currentHour = Number(formatInTimeZone(now, BUSINESS_TZ, "H"));
+  const currentMinutes = Number(formatInTimeZone(now, BUSINESS_TZ, "m"));
 
   const HOURS_BY_DOW: Record<number, { open: number; close: number } | null> = {
     0: null, 1: { open: 9, close: 17 }, 2: { open: 9, close: 17 },
