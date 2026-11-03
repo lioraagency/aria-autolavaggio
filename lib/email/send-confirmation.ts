@@ -19,6 +19,8 @@ const SERVICE_FR: Record<string, string> = {
 const SUPPLEMENT_FR: Record<string, string> = {
   calcium: 'Traitement calcium',
   moteur: 'Shampoing moteur',
+  ceramique: 'Traitement céramique + décontamination',
+  mouche: 'Produit à mouche',
 }
 
 export interface BookingEmailPayload {
@@ -101,6 +103,8 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
   const SUPPLEMENT_FR: Record<string, string> = {
     calcium: 'Traitement calcium (+25 $)',
     moteur: 'Shampoing moteur (+40 $)',
+    ceramique: 'Traitement céramique + décontamination (+199 $ / +249 $ VUS)',
+    mouche: 'Produit à mouche (+25 $)',
   }
 
   const totalDisplay = Math.round(p.totalPriceCents / 100)
