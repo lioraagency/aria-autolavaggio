@@ -11,6 +11,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // /aria/dispo a sa propre auth (lien magique Supabase), pas le NIP
+  if (pathname === "/aria/dispo" || pathname.startsWith("/aria/dispo/")) {
+    return NextResponse.next();
+  }
+
   // Protect all /aria/* routes
   if (pathname.startsWith("/aria")) {
     const res = NextResponse.next();
