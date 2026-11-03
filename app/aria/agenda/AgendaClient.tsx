@@ -6,6 +6,7 @@ import CustomerDetailPanel from "@/components/CustomerDetailPanel";
 import { getCustomer, getVehicle } from "@/lib/mock-data";
 import type { Booking, OperationalStatus, Customer, Vehicle } from "@/lib/types";
 import { centsToDisplay } from "@/lib/types";
+import { BUSINESS_TZ, businessDateKey, businessDayStartUtc } from "@/lib/time";
 
 type ViewMode  = "semaine" | "mois";
 type FilterTab = "tous" | "en_cours" | "prets" | "termines" | "annules";
@@ -31,7 +32,7 @@ function matchesFilter(b: Booking, f: FilterTab): boolean {
 function groupByDate(bookings: Booking[]): [string, Booking[]][] {
   const map = new Map<string, Booking[]>();
   bookings.forEach(b => {
-    const key = b.scheduledAt.toISOString().split("T")[0];
+    const key = businessDateKey(b.scheduledAt);
     const arr = map.get(key) ?? [];
     arr.push(b);
     map.set(key, arr);
@@ -41,9 +42,9 @@ function groupByDate(bookings: Booking[]): [string, Booking[]][] {
 
 function formatDayHeader(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
-  const today    = new Date().toISOString().split("T")[0];
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
-  const yesterday= new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const today    = businessDateKey(new Date());
+  const tomorrow = businessDateKey(businessDayStartUtc(1));
+  const yesterday= businessDateKey(businessDayStartUtc(-1));
   if (dateStr === today)     return "Aujourd'hui";
   if (dateStr === tomorrow)  return "Demain";
   if (dateStr === yesterday) return "Hier";
@@ -52,15 +53,15 @@ function formatDayHeader(dateStr: string): string {
 
 function MonthView({ bookings }: { bookings: Booking[] }) {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
+  const [year, month1, todayDay] = businessDateKey(now).split("-").map(Number);
+  const month = month1 - 1;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
 
   const countByDay = bookings.reduce<Record<number, number>>((acc, b) => {
-    if (b.scheduledAt.getFullYear() === year && b.scheduledAt.getMonth() === month) {
-      const d = b.scheduledAt.getDate();
-      acc[d] = (acc[d] ?? 0) + 1;
+    const [by, bm, bd] = businessDateKey(b.scheduledAt).split("-").map(Number);
+    if (by === year && bm - 1 === month) {
+      acc[bd] = (acc[bd] ?? 0) + 1;
     }
     return acc;
   }, {});
@@ -71,7 +72,7 @@ function MonthView({ bookings }: { bookings: Booking[] }) {
   return (
     <div className="bg-aria-surface border border-[rgba(255,255,255,0.06)] rounded-2xl p-4 mb-4">
       <p className="text-xs font-condensed uppercase tracking-widest text-aria-muted mb-3 text-center">
-        {now.toLocaleDateString("fr-CA", { month: "long", year: "numeric" })}
+        {now.toLocaleDateString("fr-CA", { month: "long", year: "numeric", timeZone: BUSINESS_TZ })}
       </p>
       <div className="grid grid-cols-7 gap-1 text-center">
         {["L","M","M","J","V","S","D"].map((d,i) => (
@@ -80,7 +81,7 @@ function MonthView({ bookings }: { bookings: Booking[] }) {
         {blanks.map((_,i) => <div key={`b${i}`} />)}
         {days.map(d => {
           const count = countByDay[d] ?? 0;
-          const isToday = d === now.getDate();
+          const isToday = d === todayDay;
           return (
             <div key={d} className="flex flex-col items-center gap-0.5 py-1">
               <span className={`text-xs font-condensed w-6 h-6 flex items-center justify-center rounded-full

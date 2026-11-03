@@ -8,6 +8,11 @@ export function businessLocalToUtc(date: string, time: string): Date {
   return fromZonedTime(`${date}T${time}:00`, BUSINESS_TZ)
 }
 
+// Instant -> "2026-11-05", date du jour à l'heure du commerce.
+export function businessDateKey(value: string | Date): string {
+  return formatInTimeZone(new Date(value), BUSINESS_TZ, 'yyyy-MM-dd')
+}
+
 // Minuit (heure du commerce) dans `offsetDays` jours, en instant UTC réel.
 // Correct aussi les jours de changement d'heure (journées de 23 h ou 25 h).
 export function businessDayStartUtc(offsetDays = 0, now: Date = new Date()): Date {
