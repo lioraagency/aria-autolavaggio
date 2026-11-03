@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceSupabase, SupabaseConfigError } from "@/lib/supabase/service";
 import { fromZonedTime, formatInTimeZone } from "date-fns-tz";
 import { BUSINESS_TZ } from "@/lib/time";
+import { HOURS_BY_DOW } from "@/lib/hours";
 
 const MAX_PER_SLOT = 2;
 
@@ -58,11 +59,6 @@ export async function GET(req: NextRequest) {
   const currentHour = Number(formatInTimeZone(now, BUSINESS_TZ, "H"));
   const currentMinutes = Number(formatInTimeZone(now, BUSINESS_TZ, "m"));
 
-  const HOURS_BY_DOW: Record<number, { open: number; close: number } | null> = {
-    0: null, 1: { open: 9, close: 17 }, 2: { open: 9, close: 17 },
-    3: { open: 9, close: 21 }, 4: { open: 9, close: 21 },
-    5: { open: 9, close: 17 }, 6: null,
-  };
   const requestedDow = requestedDate.getDay();
   const dayHours = HOURS_BY_DOW[requestedDow];
 
