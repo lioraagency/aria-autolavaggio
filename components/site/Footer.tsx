@@ -38,12 +38,20 @@ export default function Footer() {
             <span className="text-[11px] text-aria-muted">Propulsé par</span>
             <img src="/logo-liora.png" alt="LIORA" style={{height:'16px',width:'auto'}} />
           </a>
-          <Link
-            href="/aria/login"
-            className="text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"
-          >
-            Espace gestion
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/aria/login"
+              className="text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"
+            >
+              Espace gestion
+            </Link>
+            <Link
+              href="/aria/dispo"
+              className="text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"
+            >
+              Disponibilités
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
