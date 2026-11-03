@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { buildPriceBreakdown } from '@/lib/pricing'
 
 let _resend: Resend | null = null
 function getResend(): Resend {
@@ -53,9 +54,20 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
     ? p.supplements.map(s => SUPPLEMENT_FR[s] ?? s).join(', ')
     : 'Aucun'
 
-  const totalDisplay = Math.round(p.totalPriceCents / 100)
+  const breakdown = buildPriceBreakdown(
+    p.serviceType as any,
+    p.supplements,
+    p.vehicleType
+  )
+  const breakdownRowsHtml = breakdown.lines.map(l => `
+    <tr><td style="padding:6px 0;color:#666">${l.label}</td>
+        <td style="padding:6px 0;text-align:right;font-weight:600">${Math.round(l.cents / 100)} $</td></tr>
+  `).join('')
 
-  const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111"><h2 style="background:#0A0A0A;color:#D5FC96;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">NOUVELLE RÉSERVATION — ${p.bookingNumber}</h2><div style="padding:24px;border:1px solid #e5e5e5;border-top:none"><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><td style="padding:8px 0;color:#666;width:140px">Client</td><td style="padding:8px 0;font-weight:600">${p.firstName} ${p.lastName}</td></tr><tr><td style="padding:8px 0;color:#666">Téléphone</td><td style="padding:8px 0">${p.phone}</td></tr><tr><td style="padding:8px 0;color:#666">Courriel</td><td style="padding:8px 0">${p.email ?? '—'}</td></tr><tr><td style="padding:8px 0;color:#666">Date</td><td style="padding:8px 0;font-weight:600;color:#0070f3">${dateStr}</td></tr><tr><td style="padding:8px 0;color:#666">Service</td><td style="padding:8px 0">${SERVICE_FR[p.serviceType] ?? p.serviceType}</td></tr><tr><td style="padding:8px 0;color:#666">Suppléments</td><td style="padding:8px 0">${supplementsLine}</td></tr><tr><td style="padding:8px 0;color:#666">Véhicule</td><td style="padding:8px 0">${p.vehicleMake} ${p.vehicleModel} ${p.vehicleYear} — ${p.vehicleColor}</td></tr><tr><td style="padding:8px 0;color:#666">Total</td><td style="padding:8px 0;font-weight:700;font-size:16px">${totalDisplay} $</td></tr></table></div><div style="padding:12px 24px;background:#f9f9f9;font-size:12px;color:#999">Auto Lavaggio — Généré automatiquement</div></div>`
+  const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111"><h2 style="background:#0A0A0A;color:#D5FC96;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">NOUVELLE RÉSERVATION — ${p.bookingNumber}</h2><div style="padding:24px;border:1px solid #e5e5e5;border-top:none"><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><td style="padding:8px 0;color:#666;width:140px">Client</td><td style="padding:8px 0;font-weight:600">${p.firstName} ${p.lastName}</td></tr><tr><td style="padding:8px 0;color:#666">Téléphone</td><td style="padding:8px 0">${p.phone}</td></tr><tr><td style="padding:8px 0;color:#666">Courriel</td><td style="padding:8px 0">${p.email ?? '—'}</td></tr><tr><td style="padding:8px 0;color:#666">Date</td><td style="padding:8px 0;font-weight:600;color:#0070f3">${dateStr}</td></tr><tr><td style="padding:8px 0;color:#666">Service</td><td style="padding:8px 0">${SERVICE_FR[p.serviceType] ?? p.serviceType}</td></tr><tr><td style="padding:8px 0;color:#666">Suppléments</td><td style="padding:8px 0">${supplementsLine}</td></tr><tr><td style="padding:8px 0;color:#666">Véhicule</td><td style="padding:8px 0">${p.vehicleMake} ${p.vehicleModel} ${p.vehicleYear} — ${p.vehicleColor}</td></tr><tr><td colspan="2" style="padding:12px 0 4px;color:#999;font-size:12px;border-top:1px solid #eee">DÉTAIL DE LA COMMANDE</td></tr>
+  ${breakdownRowsHtml}
+  <tr><td style="padding:10px 0;font-weight:700;border-top:2px solid #0A0A0A">Total</td>
+      <td style="padding:10px 0;text-align:right;font-weight:700;font-size:16px;border-top:2px solid #0A0A0A">${Math.round(breakdown.totalCents / 100)} $</td></tr></table></div><div style="padding:12px 24px;background:#f9f9f9;font-size:12px;color:#999">Auto Lavaggio — Généré automatiquement</div></div>`
 
   await getResend().emails.send({
     from: 'Auto Lavaggio <notifications@liora.services>',

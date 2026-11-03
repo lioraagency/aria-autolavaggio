@@ -36,6 +36,7 @@ const SUPPLEMENT_LABELS: Record<string, string> = {
   calcium: 'Traitement calcium',
   moteur: 'Shampoing moteur',
   ceramique: 'Traitement céramique + décontamination',
+  mouche: 'Produit à mouche',
 }
 
 const DOW_LABELS_FULL = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
