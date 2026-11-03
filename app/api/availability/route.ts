@@ -73,11 +73,14 @@ export async function GET(req: NextRequest) {
 
   const availableSlots = allSlots.filter((slot) => {
     const slotHour = parseInt(slot.split(":")[0]);
+    if (!dayHours) return false;
     if (fullSlots.includes(slot)) return false;
     const [slotH, slotM] = slot.split(":").map(Number);
     const slotStartMinutes = slotH * 60 + slotM;
     const slotEndMinutes = slotStartMinutes + duration;
     if (dayHours) {
+      const openMinutes = dayHours.open * 60;
+      if (slotStartMinutes < openMinutes) return false;
       const closeMinutes = dayHours.close * 60;
       if (slotEndMinutes > closeMinutes) return false;
     }
