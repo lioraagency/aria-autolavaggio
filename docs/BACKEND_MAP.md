@@ -12,7 +12,10 @@
 | Public reservation submit | `app/api/public-bookings/route.ts` | **No session**; mutates `lib/mock-data.ts` in memory |
 | Public booking lookup | `GET` on same route | Reads mock store by id |
 | SMS stub | `app/api/sms/route.ts` | Mock response / console logging pattern |
-| Auth gate | `middleware.ts` | Protects `/aria/*` except login and auth API |
+| Auth gate | `middleware.ts` | Protects `/aria/*` except login, auth API and `/aria/dispo` |
+| Availability | `app/api/availability/route.ts` | Public; slots per day (Toronto time). **Blocked date → no slots**, `blocked: true` |
+| Reservation submit | `app/api/reservations/route.ts` | Public; writes Supabase. **Blocked date → `409 date_blocked`** before any write |
+| Owner date blocking | `app/aria/dispo/*` → Supabase directly | Browser client (anon key) after magic-link login; insert/delete on `blocked_dates` under RLS |
 
 ## Existing mock or in-memory behavior
 
@@ -34,6 +37,15 @@
 | **alerts** | Operational notifications (new booking, SLA breach, equipment) |
 | **business_settings** | Hours, services, feature flags, notification endpoints |
 | **system_logs** | Append-only audit trail for API and integration events |
+
+### `blocked_dates` (implemented)
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `date` | `date` primary key | Business day (Toronto calendar date), no time |
+| `created_at` | `timestamptz` | Default `now()` |
+
+RLS: `SELECT` for `anon` and `authenticated`; `INSERT` / `DELETE` for `authenticated` only when `auth.jwt() ->> 'email'` is the owner's email; no `UPDATE`. Grants are explicit in the migration (this project does not rely on default privileges). Service role reads it from API routes.
 
 Schema migrations should live in repo when implemented (SQL or Supabase migration tool)—not only in dashboard.
 

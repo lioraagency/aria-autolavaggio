@@ -9,9 +9,10 @@ High-level layout under `app/`:
 - **Public marketing / home** — `app/page.tsx`, `app/layout.tsx`
 - **Reservation funnel** — `app/reservation/` (multi-step flow, confirmation)
 - **Staff cockpit** — `app/aria/` (nested layout, pages: login, home, agenda, alertes, reglages)
+- **Owner availability** — `app/aria/dispo/` (standalone page, own Supabase Auth login; see below)
 - **Route handlers** — `app/api/*` for auth, bookings, public bookings, SMS stub
 
-Shared libraries live under `lib/` (auth session config, users, Cal wrapper, mock data, types). Middleware in `middleware.ts` restricts `/aria/*` (except login and auth API) to authenticated sessions.
+Shared libraries live under `lib/` (auth session config, users, Cal wrapper, mock data, types). Middleware in `middleware.ts` restricts `/aria/*` (except login, auth API and `/aria/dispo`) to authenticated sessions.
 
 ## Public customer flow
 
@@ -35,6 +36,17 @@ Shared libraries live under `lib/` (auth session config, users, Cal wrapper, moc
 - **Middleware:** reads session for `/aria` matcher; redirects to login if not `isLoggedIn`.
 - **Important:** current PIN list is **in source code** for expedience—**not production-secure** (see `docs/SECURITY_NOTES.md`).
 
+## Owner date blocking (`/aria/dispo`)
+
+Self-service page for the owner to close specific days (holidays, weather, etc.) in under 30 seconds.
+
+- **Auth:** Supabase Auth **magic link** (`signInWithOtp`, `shouldCreateUser: false`, `flowType: 'implicit'`). A single account exists (the owner's email), created manually in Supabase Auth; public sign-ups are disabled. This is separate from the iron-session PIN used by the rest of `/aria`, so `middleware.ts` excludes `/aria/dispo` and the cockpit `BottomNav` is hidden there.
+- **Client:** `lib/supabase/browser.ts` — the only browser-side Supabase client (anon key, subject to RLS).
+- **Data:** table `blocked_dates (date date primary key, created_at timestamptz)` — one row per closed business day (Toronto calendar date). Migration: `supabase/migrations/20261104120000_blocked_dates.sql`.
+- **Writes:** tap on a date = immediate `insert` / `delete` from the browser (optimistic UI, rollback + toast on failure, duplicate `23505` treated as success). RLS limits writes to the owner's email.
+- **Enforcement:** `GET /api/availability` returns no slots (and `blocked: true`) for a blocked date; `POST /api/reservations` rejects it with `409 date_blocked` **before any write**.
+- **Service worker:** `public/sw.js` must never cache Supabase responses or pages (network-first), otherwise the calendar shows stale data after reload and deploys are not picked up.
+
 ## Data flow (current vs planned)
 
 | Concern | Current | Planned |
@@ -43,6 +55,7 @@ Shared libraries live under `lib/` (auth session config, users, Cal wrapper, moc
 | Staff agenda | `lib/cal.ts` — mock or Cal.com HTTP | Same + optional sync from Supabase as source of truth |
 | Session | Encrypted cookie | Unchanged pattern; stronger credential store |
 | Notifications | SMS route largely mock / console | Resend + Twilio with idempotency and audit |
+| Blocked dates | Supabase `blocked_dates` — owner writes from browser (anon key + RLS), API routes read with service role | Unchanged |
 
 ## Current mock / in-memory risks
 

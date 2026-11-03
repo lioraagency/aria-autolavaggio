@@ -8,6 +8,18 @@ This document describes **known risks** and **mitigation paths** without exposin
 - **Risk:** Anyone with repo access knows valid credentials; brute force on a 4-digit PIN is trivial without lockout.
 - **Mitigation path:** Move to hashed passwords, magic links, SSO, or hardware keys; add rate limiting and lockout; never commit production credentials.
 
+## Supabase anon key in the browser (`/aria/dispo`)
+
+- **Observation:** `/aria/dispo` ships `NEXT_PUBLIC_SUPABASE_ANON_KEY` to the browser (first browser-side Supabase usage).
+- **Risk:** The anon key is public by design; any table without RLS (or with broad grants to `anon`) becomes readable/writable by anyone.
+- **Mitigation in place:** RLS enabled on all public tables; `anon` has no privileges on business tables (`permission denied`); `blocked_dates` grants only `SELECT` to `anon`, writes restricted by RLS to the owner's email. **Any new table must enable RLS and grant explicitly.**
+
+## Owner magic-link login (`/aria/dispo`)
+
+- **Observation:** Login via Supabase Auth magic link; one account (owner's email), sign-ups disabled, `shouldCreateUser: false`. The allowed email is hardcoded in the `blocked_dates` RLS policies.
+- **Risk:** Whoever controls the owner's mailbox can block dates; changing the owner's email requires updating both the Auth user and the RLS policies.
+- **Notes:** Supabase's built-in SMTP is rate-limited (~2 login emails/hour); a custom SMTP (e.g. Resend) is a planned improvement. Test accounts used during development must be deleted and removed from the policies afterwards.
+
 ## AUTH_SECRET fallback risk
 
 - **Observation:** Session encryption password may fall back to a **development default** when `AUTH_SECRET` is unset.
