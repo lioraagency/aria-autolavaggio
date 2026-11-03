@@ -11,6 +11,7 @@ import {
   getNextStatus,
   getNextStatusLabel,
 } from '@/lib/types'
+import { BUSINESS_TZ } from '@/lib/time'
 import StatusPipeline from '@/components/StatusPipeline'
 import StatusBadge from '@/components/StatusBadge'
 import PhotoSlot from '@/components/PhotoSlot'
@@ -60,6 +61,7 @@ export default function CustomerDetailPanel({
   const scheduledTime = new Date(booking.scheduledAt).toLocaleTimeString('fr-CA', {
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: BUSINESS_TZ,
   })
 
   const sinceYear = new Date(customer.createdAt).getFullYear()
