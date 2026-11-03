@@ -6,6 +6,7 @@
 
 import type { Booking, Customer, Vehicle, ServiceType, VehicleType, OperationalStatus, PaymentStatus } from '@/lib/types'
 import { BOOKINGS, CUSTOMERS, VEHICLES, getCustomer, getVehicle, getTodayBookings } from '@/lib/mock-data'
+import { businessDayStartUtc } from '@/lib/time'
 
 export type CockpitData = {
   bookings:    Booking[]
@@ -117,17 +118,14 @@ export async function getCockpitData(filter: 'today' | 'all'): Promise<CockpitDa
       .order('scheduled_at', { ascending: true })
 
     if (filter === 'today') {
-      const todayStart = new Date()
-      todayStart.setHours(0, 0, 0, 0)
-      const tomorrowStart = new Date(todayStart.getTime() + 86_400_000)
+      const todayStart = businessDayStartUtc(0)
+      const tomorrowStart = businessDayStartUtc(1)
       query = query
         .gte('scheduled_at', todayStart.toISOString())
         .lt('scheduled_at', tomorrowStart.toISOString())
     } else {
       // All bookings from yesterday onward (for agenda)
-      const cutoff = new Date()
-      cutoff.setHours(0, 0, 0, 0)
-      cutoff.setDate(cutoff.getDate() - 1)
+      const cutoff = businessDayStartUtc(-1)
       query = query.gte('scheduled_at', cutoff.toISOString())
     }
 
