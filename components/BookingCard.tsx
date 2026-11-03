@@ -11,6 +11,7 @@ import {
   PAYMENT_LABELS,
   centsToDisplay,
 } from "@/lib/types"
+import { BUSINESS_TZ } from "@/lib/time"
 
 interface BookingCardProps {
   booking: Booking
@@ -66,6 +67,7 @@ export default function BookingCard({
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: BUSINESS_TZ,
   })
 
   const nextStatus = getNextStatus(booking.operationalStatus)
