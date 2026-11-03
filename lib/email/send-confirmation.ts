@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { buildPriceBreakdown } from '@/lib/pricing'
+import { formatBusinessDateTime } from '@/lib/time'
 
 let _resend: Resend | null = null
 function getResend(): Resend {
@@ -43,12 +44,7 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
     return
   }
 
-  const localDate = p.scheduledAt.includes('T') ? p.scheduledAt.split('.')[0] : p.scheduledAt
-  const dateStr = new Date(localDate + '-04:00').toLocaleString('fr-CA', {
-    timeZone: 'America/Toronto',
-    weekday: 'long', year: 'numeric', month: 'long',
-    day: 'numeric', hour: '2-digit', minute: '2-digit',
-  })
+  const dateStr = formatBusinessDateTime(p.scheduledAt)
 
   const supplementsLine = p.supplements.length > 0
     ? p.supplements.map(s => SUPPLEMENT_FR[s] ?? s).join(', ')
@@ -94,12 +90,7 @@ export interface ClientEmailPayload {
 export async function sendClientConfirmation(p: ClientEmailPayload): Promise<void> {
   if (!p.email) return
 
-  const localDate = p.scheduledAt.includes('T') ? p.scheduledAt.split('.')[0] : p.scheduledAt
-  const dateStr = new Date(localDate + '-04:00').toLocaleString('fr-CA', {
-    timeZone: 'America/Toronto',
-    weekday: 'long', year: 'numeric', month: 'long',
-    day: 'numeric', hour: '2-digit', minute: '2-digit',
-  })
+  const dateStr = formatBusinessDateTime(p.scheduledAt)
 
   const SERVICE_FR: Record<string, string> = {
     exterior: 'Lavage extérieur',
