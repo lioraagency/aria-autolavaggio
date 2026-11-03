@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceSupabase, SupabaseConfigError } from "@/lib/supabase/service";
 import { SERVICE_DURATIONS, SERVICE_PRICES, type ServiceType } from "@/lib/types";
 import { sendOwnerConfirmation, sendClientConfirmation } from "@/lib/email/send-confirmation";
+import { businessLocalToUtc } from "@/lib/time";
 
 const VALID_SERVICE: ServiceType[] = ["exterior", "interior", "complete"];
 
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
   if (!y || !mo || !d || !Number.isFinite(h) || !Number.isFinite(mi)) {
     return NextResponse.json({ success: false, error: "Date ou heure invalide." }, { status: 400 });
   }
-  const scheduledAt = new Date(`${date}T${time}:00`);
+  const scheduledAt = businessLocalToUtc(date, time);
   if (Number.isNaN(scheduledAt.getTime())) {
     return NextResponse.json({ success: false, error: "Date ou heure invalide." }, { status: 400 });
   }
