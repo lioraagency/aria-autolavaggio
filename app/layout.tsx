@@ -11,7 +11,7 @@ const barlow = Barlow({
 
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  weight: ["300", "400", "600", "900"],
+  weight: ["400", "600", "900"],
   variable: "--font-barlow-condensed",
   display: "swap",
 });
@@ -39,8 +39,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: "#0A0A0A",
   viewportFit: "cover",
 };

@@ -99,7 +99,7 @@ function ReservationContent() {
   const progressPct = ((currentStep - 1) / 4) * 100
 
   return (
-    <div className="min-h-screen bg-aria-bg">
+    <div className="min-h-[100svh] bg-aria-bg">
       {/* Top bar */}
       <div className="sticky top-0 z-10 bg-aria-bg border-b border-[rgba(255,255,255,0.06)]">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between gap-4">

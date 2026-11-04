@@ -21,7 +21,7 @@ function ConfirmationContent() {
   }
 
   return (
-    <div className="min-h-screen bg-aria-bg flex flex-col items-center justify-center px-6">
+    <div className="min-h-[100svh] bg-aria-bg flex flex-col items-center justify-center px-6">
       {/* Checkmark */}
       <div className="w-20 h-20 rounded-full border-2 border-aria-accent flex items-center justify-center mb-8 animate-glow">
         <svg
@@ -87,7 +87,7 @@ export default function ConfirmationPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-aria-bg flex items-center justify-center">
+        <div className="min-h-[100svh] bg-aria-bg flex items-center justify-center">
           <div className="text-aria-muted font-condensed">Chargement...</div>
         </div>
       }

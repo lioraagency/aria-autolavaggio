@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -7,7 +8,7 @@ export default function Footer() {
         {/* Top row */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <Link href="/" className="flex items-center">
-            <img src="/logo-autolavaggio.png" alt="Autolavaggio" style={{height:'32px',width:'auto'}} />
+            <Image src="/logo-autolavaggio.png" alt="Autolavaggio" width={170} height={32} />
           </Link>
 
           <nav className="flex flex-wrap gap-6">
@@ -36,7 +37,7 @@ export default function Footer() {
           </p>
           <a href="https://liora.services" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 opacity-40 hover:opacity-60 transition-opacity">
             <span className="text-[11px] text-aria-muted">Propulsé par</span>
-            <img src="/logo-liora.png" alt="LIORA" style={{height:'16px',width:'auto'}} />
+            <Image src="/logo-liora.png" alt="LIORA" width={36} height={16} />
           </a>
           <div className="flex items-center gap-3">
             <Link

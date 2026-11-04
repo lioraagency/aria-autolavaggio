@@ -11,7 +11,7 @@ const stats = [
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center">
+    <section className="relative min-h-[100svh] flex flex-col justify-center">
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <Image

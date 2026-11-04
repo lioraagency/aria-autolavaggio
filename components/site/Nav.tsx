@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -22,7 +23,7 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-28 transition-[background-color,border-color,backdrop-filter,box-shadow] duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 h-28 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] transition-[background-color,border-color,backdrop-filter,box-shadow] duration-300 ${
         scrolled
           ? "bg-aria-bg/95 backdrop-blur-md border-b border-[rgba(255,255,255,0.06)]"
           : "bg-transparent"
@@ -31,10 +32,12 @@ export default function Nav() {
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img
+          <Image
             src="/logo-autolavaggio.png"
             alt="Autolavaggio"
-            style={{height:'56px',width:'auto'}}
+            width={298}
+            height={56}
+            priority
           />
         </Link>
 

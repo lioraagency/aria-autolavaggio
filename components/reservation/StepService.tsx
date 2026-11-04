@@ -108,7 +108,7 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
                   </div>
                   <span className="text-aria-muted text-sm font-sans">{SERVICE_DURATIONS[svc.key]} min</span>
                   {svc.sub && (
-                    <span className="text-aria-dim text-xs font-sans">{svc.sub}</span>
+                    <span className="text-aria-muted text-xs font-sans">{svc.sub}</span>
                   )}
                 </div>
                 <div className="flex flex-col items-end shrink-0">
