@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { VehicleType } from '@/lib/types'
 
 interface BookingFormState {
@@ -48,6 +49,13 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
     state.firstName.trim().length > 0 &&
     state.lastName.trim().length > 0 &&
     phoneDigits.length >= 10
+  const [showErrors, setShowErrors] = useState(false)
+  // Règle inchangée : on n'avance jamais si la validation échoue
+  function handleContinue() {
+    if (!(canProceed)) { setShowErrors(true); return }
+    onNext()
+  }
+  const missingMessage = !state.firstName.trim() ? 'Prénom requis' : !state.lastName.trim() ? 'Nom requis' : phoneDigits.length < 10 ? 'Numéro à 10 chiffres requis' : null
 
   function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
     const raw = e.target.value.replace(/\D/g, '').slice(0, 10)
@@ -71,12 +79,14 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
           <input
             type="text"
             id="firstName"
+            autoComplete="given-name"
+            autoCapitalize="words"
             name="firstName"
             value={state.firstName}
             onChange={e => onChange({ firstName: e.target.value })}
             onBlur={e => onChange({ firstName: capitalizeName(e.target.value) })}
             placeholder="Marie"
-            className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
+            className={`bg-aria-surface border ${showErrors && !state.firstName.trim() ? 'border-aria-danger' : 'border-[rgba(255,255,255,0.12)]'} rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full`}
           />
         </div>
         <div className="flex flex-col gap-2 flex-1">
@@ -86,12 +96,14 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
           <input
             type="text"
             id="lastName"
+            autoComplete="family-name"
+            autoCapitalize="words"
             name="lastName"
             value={state.lastName}
             onChange={e => onChange({ lastName: e.target.value })}
             onBlur={e => onChange({ lastName: capitalizeName(e.target.value) })}
             placeholder="Tremblay"
-            className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
+            className={`bg-aria-surface border ${showErrors && !state.lastName.trim() ? 'border-aria-danger' : 'border-[rgba(255,255,255,0.12)]'} rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full`}
           />
         </div>
       </div>
@@ -103,11 +115,13 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
         <input
           type="tel"
           id="phone"
+          autoComplete="tel"
+          inputMode="tel"
           name="phone"
           value={maskPhone(state.phone)}
           onChange={handlePhoneChange}
           placeholder="(XXX) XXX-XXXX"
-          className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
+          className={`bg-aria-surface border ${showErrors && phoneDigits.length < 10 ? 'border-aria-danger' : 'border-[rgba(255,255,255,0.12)]'} rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full`}
         />
       </div>
 
@@ -118,6 +132,8 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
         <input
           type="email"
           id="email"
+          autoComplete="email"
+          autoCapitalize="none"
           name="email"
           value={state.email}
           onChange={e => onChange({ email: e.target.value })}
@@ -154,6 +170,9 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
         </label>
       </div>
 
+        {showErrors && missingMessage && (
+          <p role="alert" className="w-full text-aria-danger text-sm font-sans">{missingMessage}</p>
+        )}
       <div className="flex gap-3">
         <button
           type="button"
@@ -164,8 +183,8 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
         </button>
         <button
           type="button"
-          onClick={onNext}
-          disabled={!canProceed}
+          onClick={handleContinue}
+          aria-disabled={!canProceed}
           className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           Continuer →

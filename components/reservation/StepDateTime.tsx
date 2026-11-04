@@ -190,6 +190,13 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
     }))
 
   const canProceed = state.date.length > 0 && state.time.length > 0
+  const [showErrors, setShowErrors] = useState(false)
+  // Règle inchangée : on n'avance jamais si la validation échoue
+  function handleContinue() {
+    if (!(canProceed)) { setShowErrors(true); return }
+    onNext()
+  }
+  const missingMessage = !state.date ? 'Choisissez une date' : !state.time ? 'Choisissez une heure' : null
 
   return (
     <div className="flex flex-col gap-6">
@@ -319,6 +326,9 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
         </div>
       )}
 
+        {showErrors && missingMessage && (
+          <p role="alert" className="w-full text-aria-danger text-sm font-sans">{missingMessage}</p>
+        )}
       <div className="flex gap-3">
         <button
           type="button"
@@ -329,8 +339,8 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
         </button>
         <button
           type="button"
-          onClick={onNext}
-          disabled={!canProceed}
+          onClick={handleContinue}
+          aria-disabled={!canProceed}
           className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           Continuer →

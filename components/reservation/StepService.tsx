@@ -1,6 +1,6 @@
 'use client'
 
-import type { ChangeEvent } from 'react'
+import { useState, type ChangeEvent } from 'react'
 import { ServiceType, VehicleType, SERVICE_DURATIONS, SERVICE_PRICES } from '@/lib/types'
 import { SUPPLEMENTS, computeTotal, surchargeText } from '@/lib/pricing'
 
@@ -43,6 +43,13 @@ const SERVICES: { key: ServiceType; label: string; price: number; duration: numb
 
 
 export default function StepService({ state, onChange, onNext }: StepProps) {
+  const [showErrors, setShowErrors] = useState(false)
+  // Règle inchangée : on n'avance jamais si la validation échoue
+  function handleContinue() {
+    if (!(state.serviceType)) { setShowErrors(true); return }
+    onNext()
+  }
+  const missingMessage = !state.serviceType ? 'Choisissez un service' : null
   function handleServiceSelect(key: ServiceType) {
     const newSupplements = state.supplements
     const total = computeTotal(key, newSupplements, state.vehicleType)
@@ -164,10 +171,13 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
         </div>
       </div>
 
+      {showErrors && missingMessage && (
+          <p role="alert" className="w-full text-aria-danger text-sm font-sans">{missingMessage}</p>
+      )}
       <button
         type="button"
-        onClick={onNext}
-        disabled={!state.serviceType}
+        onClick={handleContinue}
+        aria-disabled={!state.serviceType}
         className="bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg w-full py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         Continuer →

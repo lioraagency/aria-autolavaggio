@@ -90,6 +90,13 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
   }
 
   const canProceed = state.vehicleMake.trim().length > 0 && state.vehicleModel.trim().length > 0
+  const [showErrors, setShowErrors] = useState(false)
+  // Règle inchangée : on n'avance jamais si la validation échoue
+  function handleContinue() {
+    if (!(canProceed)) { setShowErrors(true); return }
+    onNext()
+  }
+  const missingMessage = !state.vehicleMake.trim() ? 'Marque requise' : !state.vehicleModel.trim() ? 'Modèle requis' : null
 
   return (
     <div className="flex flex-col gap-6">
@@ -146,7 +153,7 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
             onFocus={() => setMakesOpen(true)}
             onBlur={() => setTimeout(() => setMakesOpen(false), 150)}
             placeholder="Toyota, Honda, Ford..."
-            className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
+            className={`bg-aria-surface border ${showErrors && !state.vehicleMake.trim() ? 'border-aria-danger' : 'border-[rgba(255,255,255,0.12)]'} rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full`}
           />
           {makesOpen && filteredGroups.length > 0 && (
             <ul
@@ -210,7 +217,7 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
           value={state.vehicleModel}
           onChange={e => onChange({ vehicleModel: e.target.value })}
           placeholder="Corolla, Civic, F-150..."
-          className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
+          className={`bg-aria-surface border ${showErrors && !state.vehicleModel.trim() ? 'border-aria-danger' : 'border-[rgba(255,255,255,0.12)]'} rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full`}
         />
       </div>
 
@@ -222,9 +229,10 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
         <input
           type="number"
           id="vehicleYear"
+          inputMode="numeric"
           name="vehicleYear"
           min={1990}
-          max={2026}
+          max={new Date().getFullYear() + 1}
           value={state.vehicleYear}
           onChange={e => onChange({ vehicleYear: parseInt(e.target.value, 10) })}
           className="bg-aria-surface border border-[rgba(255,255,255,0.12)] rounded-xl px-4 py-3 text-aria-text font-sans focus:outline-none focus:border-aria-accent/50 w-full"
@@ -277,6 +285,9 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
         />
       </div>
 
+        {showErrors && missingMessage && (
+          <p role="alert" className="w-full text-aria-danger text-sm font-sans">{missingMessage}</p>
+        )}
       <div className="flex gap-3">
         <button
           type="button"
@@ -287,8 +298,8 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
         </button>
         <button
           type="button"
-          onClick={onNext}
-          disabled={!canProceed}
+          onClick={handleContinue}
+          aria-disabled={!canProceed}
           className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           Continuer →
