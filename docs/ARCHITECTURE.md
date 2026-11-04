@@ -40,10 +40,10 @@ Shared libraries live under `lib/` (auth session config, users, Cal wrapper, moc
 
 Self-service page for the owner to close specific days (holidays, weather, etc.) in under 30 seconds.
 
-- **Auth:** Supabase Auth **magic link** (`signInWithOtp`, `shouldCreateUser: false`, `flowType: 'implicit'`). A single account exists (the owner's email), created manually in Supabase Auth; public sign-ups are disabled. This is separate from the iron-session PIN used by the rest of `/aria`, so `middleware.ts` excludes `/aria/dispo` and the cockpit `BottomNav` is hidden there.
+- **Auth:** Supabase Auth **magic link** (`signInWithOtp`, `shouldCreateUser: false`, `flowType: 'implicit'`). A single account exists — the owner's email `autolavaggioquebec@gmail.com` (lowercase) — created via the Auth admin API with the email pre-confirmed; public sign-ups are disabled. The login form lowercases the typed email. This is separate from the iron-session PIN used by the rest of `/aria`, so `middleware.ts` excludes `/aria/dispo` and the cockpit `BottomNav` is hidden there.
 - **Client:** `lib/supabase/browser.ts` — the only browser-side Supabase client (anon key, subject to RLS).
 - **Data:** table `blocked_dates (date date primary key, created_at timestamptz)` — one row per closed business day (Toronto calendar date). Migration: `supabase/migrations/20261104120000_blocked_dates.sql`.
-- **Writes:** tap on a date = immediate `insert` / `delete` from the browser (optimistic UI, rollback + toast on failure, duplicate `23505` treated as success). RLS limits writes to the owner's email.
+- **Writes:** tap on a date = immediate `insert` / `delete` from the browser (optimistic UI, rollback + toast on failure, duplicate `23505` treated as success). RLS limits writes to the owner's email (`autolavaggioquebec@gmail.com`, exact match; set by `supabase/migrations/20261104180000_blocked_dates_owner_email.sql`, which replaced an incorrect address from the initial migration).
 - **Enforcement:** `GET /api/availability` returns no slots (and `blocked: true`) for a blocked date; `POST /api/reservations` rejects it with `409 date_blocked` **before any write**.
 - **Service worker:** `public/sw.js` must never cache Supabase responses or pages (network-first), otherwise the calendar shows stale data after reload and deploys are not picked up.
 

@@ -67,7 +67,8 @@ function LoginForm() {
     setError(null);
     setStatus("sending");
     const { error: err } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
+      // Minuscules : Supabase Auth stocke les courriels en minuscules et la RLS compare le texte exact.
+      email: email.trim().toLowerCase(),
       options: {
         shouldCreateUser: false,
         emailRedirectTo: `${window.location.origin}/aria/dispo`,

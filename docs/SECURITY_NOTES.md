@@ -16,8 +16,8 @@ This document describes **known risks** and **mitigation paths** without exposin
 
 ## Owner magic-link login (`/aria/dispo`)
 
-- **Observation:** Login via Supabase Auth magic link; one account (owner's email), sign-ups disabled, `shouldCreateUser: false`. The allowed email is hardcoded in the `blocked_dates` RLS policies.
-- **Risk:** Whoever controls the owner's mailbox can block dates; changing the owner's email requires updating both the Auth user and the RLS policies.
+- **Observation:** Login via Supabase Auth magic link; one account (`autolavaggioquebec@gmail.com`), sign-ups disabled, `shouldCreateUser: false`. The allowed email is hardcoded in the `blocked_dates` RLS policies (latest: `20261104180000_blocked_dates_owner_email.sql`) and compared **exactly** — it must be lowercase, like Supabase Auth stores it.
+- **Risk:** Whoever controls the owner's mailbox can block dates; changing the owner's email requires updating both the Auth user and the RLS policies (new migration: `DROP` + `CREATE` of `blocked_dates_insert_owner` / `blocked_dates_delete_owner` in one transaction).
 - **Notes:** Supabase's built-in SMTP is rate-limited (~2 login emails/hour); a custom SMTP (e.g. Resend) is a planned improvement. Test accounts used during development must be deleted and removed from the policies afterwards.
 
 ## AUTH_SECRET fallback risk
