@@ -1,4 +1,4 @@
-const CACHE_NAME = "aria-v0.2"; // v0.2 : purge du cache v0.1 (réponses Supabase et pages périmées)
+const CACHE_NAME = "aria-v0.3"; // v0.3 : purge des anciennes icônes (triangle Vercel)
 const STATIC_ASSETS = [
   "/aria/login",
   "/manifest.json",
