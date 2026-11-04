@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ServiceType, SERVICE_LABELS, VehicleType } from '@/lib/types'
-import { SUV_SURCHARGE_BY_SERVICE, SUPPLEMENTS } from '@/lib/pricing'
+import { buildPriceBreakdown } from '@/lib/pricing'
 import { VEHICLE_LABELS } from '@/lib/vehicles'
 
 interface BookingFormState {
@@ -31,13 +31,6 @@ interface StepProps {
   onChange: (updates: Partial<BookingFormState>) => void
   onNext: () => void
   onBack: () => void
-}
-
-const SUPPLEMENT_LABELS: Record<string, string> = {
-  calcium: 'Traitement calcium',
-  moteur: 'Shampoing moteur',
-  ceramique: 'Traitement céramique + décontamination',
-  mouche: 'Produit à mouche',
 }
 
 const DOW_LABELS_FULL = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
@@ -68,6 +61,9 @@ export default function StepConfirm({ state, onBack }: StepProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const breakdown  = buildPriceBreakdown(state.serviceType, state.supplements, state.vehicleType)
+  const extraLines = breakdown.lines.filter(l => l.kind !== 'service')
+
   async function handleSubmit() {
     setLoading(true)
     setError(null)
@@ -79,7 +75,7 @@ export default function StepConfirm({ state, onBack }: StepProps) {
         body: JSON.stringify({
           serviceType: state.serviceType,
           supplements: state.supplements,
-          totalPrice: state.totalPrice,
+          totalPrice: breakdown.totalCents,
           vehicleType: state.vehicleType,
           vehicleMake: state.vehicleMake,
           vehicleModel: state.vehicleModel,
@@ -119,7 +115,8 @@ export default function StepConfirm({ state, onBack }: StepProps) {
     }
   }
 
-  const totalDisplay = Math.round(state.totalPrice / 100)
+  // Lignes et total viennent du même calcul que le serveur (lib/pricing)
+  const totalDisplay = Math.round(breakdown.totalCents / 100)
 
   return (
     <div className="flex flex-col gap-6">
@@ -136,25 +133,18 @@ export default function StepConfirm({ state, onBack }: StepProps) {
         <span className="font-condensed font-black text-xl uppercase text-aria-text">
           {state.serviceType ? SERVICE_LABELS[state.serviceType] : '—'}
         </span>
-        {state.supplements.length > 0 && (
+        {extraLines.length > 0 && (
           <div className="flex flex-col gap-1">
-            {state.supplements.map(s => {
-              const sup = SUPPLEMENTS.find(x => x.key === s)
-              const amount = sup
-                ? (state.vehicleType === 'suv' && sup.amountBySuv ? sup.amountBySuv : sup.amount) / 100
-                : null
-              return (
-                <span key={s} className="text-aria-muted text-sm font-sans">
-                  + {SUPPLEMENT_LABELS[s] ?? s}{amount !== null ? ` (+${amount}$)` : ''}
-                </span>
-              )
-            })}
+            {extraLines.map((line, i) => (
+              <div
+                key={i}
+                className={`flex items-baseline justify-between gap-3 text-sm font-sans ${line.kind === 'surcharge' ? 'text-aria-accent' : 'text-aria-muted'}`}
+              >
+                <span>+ {line.label}</span>
+                <span className="shrink-0">+{Math.round(line.cents / 100)} $</span>
+              </div>
+            ))}
           </div>
-        )}
-        {state.vehicleType === 'suv' && state.serviceType && (SUV_SURCHARGE_BY_SERVICE[state.serviceType] ?? 0) > 0 && (
-          <span className="text-aria-accent text-sm font-sans">
-            + Supplément VUS (+{(SUV_SURCHARGE_BY_SERVICE[state.serviceType] ?? 0) / 100}$)
-          </span>
         )}
         <div className="pt-2 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between">
           <div className="flex flex-col">
