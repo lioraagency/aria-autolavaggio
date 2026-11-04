@@ -34,8 +34,7 @@ export default function Hero() {
         </p>
 
         <h1
-          className="font-condensed font-black text-[clamp(3.5rem,9vw,7rem)] uppercase leading-none tracking-tight text-aria-text animate-fade-up"
-          style={{ animationDelay: "100ms" }}
+          className="font-condensed font-black text-[clamp(3.5rem,9vw,7rem)] uppercase leading-none tracking-tight text-aria-text"
         >
           Propre.
           <br />

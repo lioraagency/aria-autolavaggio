@@ -208,7 +208,7 @@ export default function StepConfirm({ state, onBack }: StepProps) {
         type="button"
         onClick={handleSubmit}
         disabled={loading}
-        className="bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg w-full py-5 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg w-full py-5 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.97]"
       >
         {loading ? 'Confirmation en cours...' : 'Confirmer ma réservation →'}
       </button>

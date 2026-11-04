@@ -46,7 +46,7 @@ export default function Testimonials() {
     <section
       id="avis"
       ref={sectionRef}
-      className="py-24 bg-aria-surface opacity-0 translate-y-8 transition-all duration-700 [&.is-visible]:opacity-100 [&.is-visible]:translate-y-0"
+      className="py-24 bg-aria-surface opacity-0 translate-y-4 motion-reduce:translate-y-0 transition-[opacity,transform] duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] [&.is-visible]:opacity-100 [&.is-visible]:translate-y-0"
     >
       <div className="max-w-6xl mx-auto px-6 md:px-12">
         <h2 className="font-condensed font-black uppercase tracking-tight text-5xl md:text-6xl text-aria-text mb-16">

@@ -152,7 +152,7 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
             onChange={() => onChange({ isFirstVisit: !state.isFirstVisit })}
           />
           <div
-            className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+            className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-[color,background-color,border-color,box-shadow,opacity,transform] ${
               state.isFirstVisit
                 ? 'bg-aria-accent border-aria-accent'
                 : 'border-[rgba(255,255,255,0.12)] bg-aria-surface'
@@ -185,7 +185,7 @@ export default function StepCustomer({ state, onChange, onNext, onBack }: StepPr
           type="button"
           onClick={handleContinue}
           aria-disabled={!canProceed}
-          className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.97]"
         >
           Continuer →
         </button>

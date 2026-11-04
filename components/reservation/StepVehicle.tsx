@@ -120,7 +120,7 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
                 key={chip.label}
                 type="button"
                 onClick={() => handleChipSelect(chip)}
-                className={`relative after:absolute after:content-[''] after:-inset-y-[3px] px-4 py-2 rounded-lg text-sm transition-all ${
+                className={`relative after:absolute after:content-[''] after:-inset-y-[3px] px-4 py-2 rounded-lg text-sm transition-[color,background-color,border-color,box-shadow,opacity,transform] active:scale-[0.97] ${
                   selected
                     ? 'bg-aria-accent text-[#0A0A0A] font-condensed font-black'
                     : 'bg-aria-surface border border-[rgba(255,255,255,0.06)] text-aria-muted font-condensed'
@@ -252,7 +252,7 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
                 key={color.label}
                 type="button"
                 onClick={() => onChange({ vehicleColor: color.label })}
-                className={`relative after:absolute after:content-[''] after:-inset-y-[3px] flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                className={`relative after:absolute after:content-[''] after:-inset-y-[3px] flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-[color,background-color,border-color,box-shadow,opacity,transform] active:scale-[0.97] ${
                   selected
                     ? 'bg-aria-accent text-[#0A0A0A] font-condensed font-black'
                     : 'bg-aria-surface border border-[rgba(255,255,255,0.06)] text-aria-muted font-condensed'
@@ -300,7 +300,7 @@ export default function StepVehicle({ state, onChange, onNext, onBack }: StepPro
           type="button"
           onClick={handleContinue}
           aria-disabled={!canProceed}
-          className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.97]"
         >
           Continuer →
         </button>

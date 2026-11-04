@@ -265,7 +265,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
                   type="button"
                   disabled={disabled}
                   onClick={() => handleDayClick(date)}
-                  className={`relative after:absolute after:content-[''] after:-inset-y-0.5 h-10 w-full flex items-center justify-center text-sm rounded-lg transition-all
+                  className={`relative after:absolute after:content-[''] after:-inset-y-0.5 h-10 w-full flex items-center justify-center text-sm rounded-lg transition-[color,background-color,border-color,box-shadow,opacity,transform] active:scale-[0.97]
                     ${isSelected ? 'bg-aria-accent text-[#0A0A0A] font-black' : ''}
                     ${!isSelected && !disabled ? 'text-aria-text hover:bg-aria-accent/10 cursor-pointer' : ''}
                     ${disabled ? 'text-aria-dim opacity-50 cursor-not-allowed' : ''}
@@ -306,7 +306,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
                     type="button"
                     disabled={unavailable}
                     onClick={() => !unavailable && onChange({ time: slot.time })}
-                    className={`py-2 rounded-lg text-sm font-condensed font-black uppercase transition-all relative
+                    className={`py-2 rounded-lg text-sm font-condensed font-black uppercase transition-[color,background-color,border-color,box-shadow,opacity,transform] active:scale-[0.97] relative
                       ${selected ? 'bg-aria-accent text-[#0A0A0A]' : ''}
                       ${!selected && !unavailable ? 'bg-aria-surface border border-[rgba(255,255,255,0.06)] text-aria-text hover:border-aria-accent/30' : ''}
                       ${unavailable ? 'bg-aria-surface border border-[rgba(255,255,255,0.06)] text-aria-dim opacity-50 cursor-not-allowed' : ''}
@@ -341,7 +341,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
           type="button"
           onClick={handleContinue}
           aria-disabled={!canProceed}
-          className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="flex-[2] bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.97]"
         >
           Continuer →
         </button>

@@ -138,8 +138,8 @@ function ReservationContent() {
         {/* Progress bar */}
         <div className="w-full h-1 bg-aria-surface">
           <div
-            className="h-1 bg-aria-accent transition-all duration-300"
-            style={{ width: `${progressPct}%` }}
+            className="h-1 w-full origin-left bg-aria-accent transition-transform duration-[250ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
+            style={{ transform: `scaleX(${progressPct / 100})` }}
           />
         </div>
       </div>

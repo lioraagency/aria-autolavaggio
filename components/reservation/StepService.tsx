@@ -88,7 +88,7 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
               key={svc.key}
               type="button"
               onClick={() => handleServiceSelect(svc.key)}
-              className={`w-full text-left rounded-xl p-4 transition-all ${
+              className={`w-full text-left rounded-xl p-4 transition-[color,background-color,border-color,box-shadow,opacity,transform] active:scale-[0.97] ${
                 selected
                   ? 'border border-aria-accent bg-aria-accent/5'
                   : 'border border-[rgba(255,255,255,0.06)] bg-aria-surface'
@@ -143,7 +143,7 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
               <div className="pointer-events-none flex min-h-[44px] items-center gap-4 px-4 py-3">
                 <div
                   aria-hidden="true"
-                  className={`relative z-0 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all ${
+                  className={`relative z-0 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-[color,background-color,border-color,box-shadow,opacity,transform] active:scale-[0.97] ${
                     checked
                       ? 'border-aria-accent bg-aria-accent'
                       : 'border-[rgba(255,255,255,0.25)] bg-transparent'
@@ -178,7 +178,7 @@ export default function StepService({ state, onChange, onNext }: StepProps) {
         type="button"
         onClick={handleContinue}
         aria-disabled={!state.serviceType}
-        className="bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg w-full py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="bg-aria-accent text-[#0A0A0A] font-condensed font-black uppercase text-lg w-full py-4 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.97]"
       >
         Continuer →
       </button>

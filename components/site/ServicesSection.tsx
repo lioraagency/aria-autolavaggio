@@ -77,7 +77,7 @@ export default function ServicesSection() {
     <section
       id="services"
       ref={sectionRef}
-      className="py-24 bg-aria-surface opacity-0 translate-y-8 transition-all duration-700 [&.is-visible]:opacity-100 [&.is-visible]:translate-y-0"
+      className="py-24 bg-aria-surface opacity-0 translate-y-4 motion-reduce:translate-y-0 transition-[opacity,transform] duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] [&.is-visible]:opacity-100 [&.is-visible]:translate-y-0"
     >
       <div className="max-w-6xl mx-auto px-6 md:px-12">
         <h2 className="font-condensed font-black uppercase tracking-tight text-5xl md:text-6xl text-aria-text mb-16">
@@ -88,7 +88,7 @@ export default function ServicesSection() {
           {services.map((service) => (
             <div
               key={service.name}
-              className="relative bg-aria-bg border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 hover:border-aria-accent/40 hover:-translate-y-1 transition-all duration-200"
+              className="relative bg-aria-bg border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 hover:border-aria-accent/40 hover:-translate-y-1 transition-[color,background-color,border-color,box-shadow,opacity,transform] duration-200"
             >
               {service.recommended && (
                 <span className="absolute top-4 right-4 bg-aria-accent text-[#0A0A0A] font-condensed font-black text-xs uppercase tracking-wider px-3 py-1 rounded-full">
