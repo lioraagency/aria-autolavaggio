@@ -1,10 +1,11 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ServiceType, VehicleType } from '@/lib/types'
 import { computeTotal } from '@/lib/pricing'
+import { track } from '@/lib/analytics'
 import { SLUG_TO_SERVICE_TYPE } from '@/lib/config'
 import StepService from '@/components/reservation/StepService'
 import StepVehicle from '@/components/reservation/StepVehicle'
@@ -66,6 +67,8 @@ function ReservationContent() {
   const preselectedService: ServiceType | null = SLUG_TO_SERVICE_TYPE[slug] ?? null
 
   const [currentStep, setCurrentStep] = useState(1)
+  // Audience : numéro d'étape seulement, aucune donnée personnelle
+  useEffect(() => { track('reservation_step', { step: currentStep }) }, [currentStep])
   const [formState, setFormState] = useState<BookingFormState>(() => ({
     ...INITIAL_STATE,
     serviceType: preselectedService,

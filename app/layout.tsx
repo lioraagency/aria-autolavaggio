@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -52,6 +53,11 @@ export default function RootLayout({
     <html lang="fr" className={`${barlow.variable} ${barlowCondensed.variable}`}>
       <body className="font-sans bg-aria-bg text-aria-text antialiased">
         {children}
+        {/* Vercel Web Analytics : file d'attente window.va, puis script servi par Vercel */}
+        <Script id="vercel-analytics-queue" strategy="afterInteractive">
+          {"window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };"}
+        </Script>
+        <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ServiceType, SERVICE_LABELS, VehicleType } from '@/lib/types'
 import { buildPriceBreakdown } from '@/lib/pricing'
+import { track } from '@/lib/analytics'
 import { VEHICLE_LABELS } from '@/lib/vehicles'
 
 interface BookingFormState {
@@ -108,6 +109,7 @@ export default function StepConfirm({ state, onBack }: StepProps) {
 
       if (!data.success) throw new Error('La réservation a échoué.')
 
+      track('reservation_confirmed')
       router.push(`/reservation/confirmation?id=${data.bookingId}&num=${data.bookingNumber}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue.')
