@@ -41,13 +41,13 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <Link
               href="/aria/login"
-              className="text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"
+              className="relative after:absolute after:content-[''] after:-inset-y-[15px] text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"
             >
               Espace gestion
             </Link>
             <Link
               href="/aria/dispo"
-              className="text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"
+              className="relative after:absolute after:content-[''] after:-inset-y-[15px] text-[10px] opacity-30 text-aria-muted hover:opacity-60 transition-opacity"
             >
               Disponibilités
             </Link>

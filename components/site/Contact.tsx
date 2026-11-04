@@ -61,7 +61,7 @@ export default function Contact() {
               </h3>
               <a
                 href="tel:5817053005"
-                className="text-aria-accent font-condensed font-black text-2xl hover:underline"
+                className="relative after:absolute after:content-[''] after:-inset-y-2 text-aria-accent font-condensed font-black text-2xl hover:underline"
               >
                 581-705-3005
               </a>

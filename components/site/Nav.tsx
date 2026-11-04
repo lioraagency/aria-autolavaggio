@@ -59,7 +59,7 @@ export default function Nav() {
 
         {/* Mobile: hamburger */}
         <button
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5"
+          className="relative after:absolute after:content-[''] after:-inset-1.5 md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5"
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="Menu"
         >

@@ -131,7 +131,7 @@ export default function ServicesSection() {
 
               <Link
                 href={`/reservation?service=${service.slug}`}
-                className="inline-block text-aria-accent text-sm font-condensed uppercase tracking-wider mt-6 hover:underline"
+                className="relative after:absolute after:content-[''] after:-inset-y-3 inline-block text-aria-accent text-sm font-condensed uppercase tracking-wider mt-6 hover:underline"
               >
                 Réserver ce service →
               </Link>

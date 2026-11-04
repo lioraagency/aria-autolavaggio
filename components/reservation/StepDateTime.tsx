@@ -215,7 +215,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
             type="button"
             onClick={goPrev}
             disabled={!canGoPrev()}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-aria-muted hover:text-aria-text disabled:opacity-30 transition-colors"
+            className="relative after:absolute after:content-[''] after:-inset-1.5 w-8 h-8 flex items-center justify-center rounded-lg text-aria-muted hover:text-aria-text disabled:opacity-30 transition-colors"
           >
             ‹
           </button>
@@ -226,7 +226,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
             type="button"
             onClick={goNext}
             disabled={!canGoNext()}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-aria-muted hover:text-aria-text disabled:opacity-30 transition-colors"
+            className="relative after:absolute after:content-[''] after:-inset-1.5 w-8 h-8 flex items-center justify-center rounded-lg text-aria-muted hover:text-aria-text disabled:opacity-30 transition-colors"
           >
             ›
           </button>
@@ -265,7 +265,7 @@ export default function StepDateTime({ state, onChange, onNext, onBack }: StepPr
                   type="button"
                   disabled={disabled}
                   onClick={() => handleDayClick(date)}
-                  className={`h-10 w-full flex items-center justify-center text-sm rounded-lg transition-all
+                  className={`relative after:absolute after:content-[''] after:-inset-y-0.5 h-10 w-full flex items-center justify-center text-sm rounded-lg transition-all
                     ${isSelected ? 'bg-aria-accent text-[#0A0A0A] font-black' : ''}
                     ${!isSelected && !disabled ? 'text-aria-text hover:bg-aria-accent/10 cursor-pointer' : ''}
                     ${disabled ? 'text-aria-dim opacity-50 cursor-not-allowed' : ''}

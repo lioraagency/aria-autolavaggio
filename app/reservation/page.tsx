@@ -106,7 +106,7 @@ function ReservationContent() {
           {currentStep === 1 ? (
             <Link
               href="/"
-              className="w-8 h-8 flex items-center justify-center text-aria-muted hover:text-aria-text transition-colors"
+              aria-label="Retour à l'accueil" className="relative after:absolute after:content-[''] after:-inset-1.5 w-8 h-8 flex items-center justify-center text-aria-muted hover:text-aria-text transition-colors"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                 <path d="M19 12H5M12 5l-7 7 7 7" />
@@ -116,7 +116,7 @@ function ReservationContent() {
             <button
               type="button"
               onClick={handleBack}
-              className="w-8 h-8 flex items-center justify-center text-aria-muted hover:text-aria-text transition-colors"
+              aria-label="Étape précédente" className="relative after:absolute after:content-[''] after:-inset-1.5 w-8 h-8 flex items-center justify-center text-aria-muted hover:text-aria-text transition-colors"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                 <path d="M19 12H5M12 5l-7 7 7 7" />
