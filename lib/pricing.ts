@@ -1,6 +1,30 @@
 import { ServiceType, SERVICE_PRICES } from '@/lib/types'
+import type { VehicleType } from '@/lib/vehicles'
 
-export const SUV_SURCHARGE_BY_SERVICE: Record<string, number> = {
+// ── Catégorie de prix par type de véhicule ────────────────────────────────────
+// Règle confirmée par le client (2026-11-04) :
+//   berline (prix de base) : sedan, suv_compact, compact
+//   VUS (prix majoré)      : suv, truck (pick-up)
+// Record<VehicleType, …> : un nouveau type de véhicule ne compile pas sans catégorie.
+export type PriceTier = 'standard' | 'suv'
+
+export const VEHICLE_PRICE_TIER: Record<VehicleType, PriceTier> = {
+  sedan:       'standard',
+  suv_compact: 'standard',
+  compact:     'standard',
+  suv:         'suv',
+  truck:       'suv',
+}
+
+// Libellé de la catégorie majorée, utilisé dans tous les textes de prix
+export const SUV_TIER_LABEL = 'VUS/pick-up'
+
+export function priceTier(vehicleType: VehicleType): PriceTier {
+  return VEHICLE_PRICE_TIER[vehicleType]
+}
+
+// Majoration du service pour la catégorie VUS
+export const SUV_SURCHARGE_BY_SERVICE: Record<ServiceType, number> = {
   exterior: 0,
   interior: 1500,
   complete: 2000,
@@ -15,69 +39,71 @@ export const SUPPLEMENTS: Supplement[] = [
   { key: 'mouche',    label: 'Produit à mouche (+25$)',                                    amount: 2500 },
 ]
 
-export function computeTotal(
-  serviceType: ServiceType | null,
-  supplements: string[],
-  vehicleType?: string
-): number {
-  if (!serviceType) return 0
-  const base = SERVICE_PRICES[serviceType]
-  const suvExtra = (vehicleType === 'suv')
-    ? (SUV_SURCHARGE_BY_SERVICE[serviceType] ?? 0)
-    : 0
-  const extra = supplements.reduce((sum, s) => {
-    const sup = SUPPLEMENTS.find(x => x.key === s)
-    if (!sup) return sum
-    const isSuv = vehicleType === 'suv'
-    return sum + (isSuv && sup.amountBySuv ? sup.amountBySuv : sup.amount)
-  }, 0)
-  return base + extra + suvExtra
-}
-
-const SERVICE_NAMES_FR: Record<string, string> = {
+export const SERVICE_NAMES_FR: Record<ServiceType, string> = {
   exterior: 'Lavage extérieur',
   interior: 'Lavage intérieur',
   complete: 'Lavage complet',
 }
 
-const SUPPLEMENT_NAMES_FR: Record<string, string> = {
+export const SUPPLEMENT_NAMES_FR: Record<string, string> = {
   calcium: 'Traitement calcium',
   moteur: 'Shampoing moteur',
   ceramique: 'Traitement céramique + décontamination',
   mouche: 'Produit à mouche',
 }
 
-export interface PriceLine { label: string; cents: number }
+export function vehicleSurcharge(serviceType: ServiceType, vehicleType: VehicleType): number {
+  return priceTier(vehicleType) === 'suv' ? SUV_SURCHARGE_BY_SERVICE[serviceType] : 0
+}
+
+export function supplementPrice(sup: Supplement, vehicleType: VehicleType): number {
+  return priceTier(vehicleType) === 'suv' && sup.amountBySuv ? sup.amountBySuv : sup.amount
+}
+
+// ── Calcul unique : écran de confirmation, serveur et courriels l'appellent ───
+export interface PriceLine {
+  kind: 'service' | 'surcharge' | 'supplement'
+  label: string
+  cents: number
+}
 export interface PriceBreakdown { lines: PriceLine[]; totalCents: number }
 
 export function buildPriceBreakdown(
   serviceType: ServiceType | null,
   supplements: string[],
-  vehicleType?: string
+  vehicleType: VehicleType
 ): PriceBreakdown {
   if (!serviceType) return { lines: [], totalCents: 0 }
-  const isSuv = vehicleType === 'suv'
+  const isSuvTier = priceTier(vehicleType) === 'suv'
   const lines: PriceLine[] = []
 
   lines.push({
+    kind: 'service',
     label: SERVICE_NAMES_FR[serviceType] ?? serviceType,
     cents: SERVICE_PRICES[serviceType],
   })
 
-  const suvExtra = isSuv ? (SUV_SURCHARGE_BY_SERVICE[serviceType] ?? 0) : 0
-  if (suvExtra > 0) {
-    lines.push({ label: 'Supplément VUS', cents: suvExtra })
+  const surcharge = vehicleSurcharge(serviceType, vehicleType)
+  if (surcharge > 0) {
+    lines.push({ kind: 'surcharge', label: `Supplément ${SUV_TIER_LABEL}`, cents: surcharge })
   }
 
   for (const s of supplements) {
     const sup = SUPPLEMENTS.find(x => x.key === s)
     if (!sup) continue
-    const cents = isSuv && sup.amountBySuv ? sup.amountBySuv : sup.amount
-    const suffix = isSuv && sup.amountBySuv ? ' (VUS)' : ''
-    lines.push({ label: (SUPPLEMENT_NAMES_FR[s] ?? s) + suffix, cents })
+    const suffix = isSuvTier && sup.amountBySuv ? ` (${SUV_TIER_LABEL})` : ''
+    lines.push({ kind: 'supplement', label: (SUPPLEMENT_NAMES_FR[s] ?? s) + suffix, cents: supplementPrice(sup, vehicleType) })
   }
 
   return { lines, totalCents: lines.reduce((sum, l) => sum + l.cents, 0) }
+}
+
+export function computeTotal(
+  serviceType: ServiceType | null,
+  supplements: string[],
+  vehicleType: VehicleType
+): number {
+  return buildPriceBreakdown(serviceType, supplements, vehicleType).totalCents
 }
 
 export function formatBreakdownText(b: PriceBreakdown): string {

@@ -1,6 +1,8 @@
 import { Resend } from 'resend'
 import { buildPriceBreakdown } from '@/lib/pricing'
 import { formatBusinessDateTime } from '@/lib/time'
+import type { VehicleType } from '@/lib/vehicles'
+import type { ServiceType } from '@/lib/types'
 
 let _resend: Resend | null = null
 function getResend(): Resend {
@@ -36,7 +38,7 @@ export interface BookingEmailPayload {
   vehicleModel: string
   vehicleYear: number
   vehicleColor: string
-  vehicleType: string
+  vehicleType: VehicleType
   totalPriceCents: number
 }
 
@@ -53,7 +55,7 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
     : 'Aucun'
 
   const breakdown = buildPriceBreakdown(
-    p.serviceType as any,
+    p.serviceType as ServiceType,
     p.supplements,
     p.vehicleType
   )

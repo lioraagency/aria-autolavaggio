@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceSupabase, SupabaseConfigError } from "@/lib/supabase/service";
-import { SERVICE_DURATIONS, SERVICE_PRICES, type ServiceType } from "@/lib/types";
+import { SERVICE_DURATIONS, type ServiceType } from "@/lib/types";
 import { sendOwnerConfirmation, sendClientConfirmation } from "@/lib/email/send-confirmation";
 import { businessLocalToUtc } from "@/lib/time";
+import { computeTotal, SUPPLEMENT_NAMES_FR } from "@/lib/pricing";
+import { isVehicleType } from "@/lib/vehicles";
 
 const VALID_SERVICE: ServiceType[] = ["exterior", "interior", "complete"];
 
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
   const serviceType = body.serviceType as string | undefined;
   const supplements = (Array.isArray(body.supplements) ? body.supplements : []) as string[];
   const totalPriceRaw = body.totalPrice;
-  const vehicleType = (body.vehicleType as string) || "sedan";
+  const vehicleTypeRaw = body.vehicleType ?? "sedan";
   const vehicleMake = String(body.vehicleMake ?? "").trim();
   const vehicleModel = String(body.vehicleModel ?? "").trim();
   const vehicleYear = Number(body.vehicleYear);
@@ -64,6 +66,11 @@ export async function POST(req: NextRequest) {
   }
 
   const st = serviceType as ServiceType;
+
+  if (!isVehicleType(vehicleTypeRaw)) {
+    return NextResponse.json({ success: false, error: "Type de véhicule invalide." }, { status: 400 });
+  }
+  const vehicleType = vehicleTypeRaw;
 
   if (!vehicleMake || !vehicleModel || !Number.isFinite(vehicleYear) || vehicleYear < 1950 || vehicleYear > 2100) {
     return NextResponse.json(
@@ -106,21 +113,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const defaultPrice = SERVICE_PRICES[st];
-  const priceCents =
-    typeof totalPriceRaw === "number" && Number.isFinite(totalPriceRaw) && totalPriceRaw > 0
-      ? Math.round(totalPriceRaw)
-      : defaultPrice;
+  // Prix décidé par le serveur (lib/pricing), jamais par le navigateur
+  const priceCents = computeTotal(st, supplements, vehicleType);
+  if (typeof totalPriceRaw === "number" && Math.round(totalPriceRaw) !== priceCents) {
+    console.warn("[api/reservations] écart de prix navigateur/serveur", {
+      navigateur: totalPriceRaw,
+      serveur: priceCents,
+      serviceType: st,
+      vehicleType,
+      supplements,
+    });
+  }
 
   const duration = SERVICE_DURATIONS[st] ?? 60;
 
-  const supplementLabels: Record<string, string> = {
-    calcium: "Traitement calcium",
-    moteur: "Shampoing moteur",
-  };
   const supplementNotes =
     supplements.length > 0
-      ? `Suppléments: ${supplements.map((s) => supplementLabels[s] ?? s).join(", ")}`
+      ? `Suppléments: ${supplements.map((s) => SUPPLEMENT_NAMES_FR[s] ?? s).join(", ")}`
       : null;
 
   const customerNotes = isFirstVisit ? "Première visite" : null;
