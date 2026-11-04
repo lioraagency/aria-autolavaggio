@@ -217,7 +217,7 @@ export default function StepConfirm({ state, onBack }: StepProps) {
         type="button"
         onClick={onBack}
         disabled={loading}
-        className="text-aria-muted font-condensed uppercase text-sm hover:text-aria-text transition-colors disabled:opacity-50"
+        className="relative after:absolute after:content-[''] after:-inset-y-3 text-aria-muted font-condensed uppercase text-sm hover:text-aria-text transition-colors disabled:opacity-50"
       >
         ← Modifier
       </button>
