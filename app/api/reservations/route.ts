@@ -340,6 +340,7 @@ export async function POST(req: NextRequest) {
         vehicleModel,
         vehicleYear,
         vehicleColor,
+        vehicleType,
         totalPriceCents: priceCents,
       }).catch(e => console.error('[email] client confirmation failed:', e)),
     ])

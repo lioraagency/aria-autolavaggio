@@ -2,12 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { SERVICE_PRICES } from "@/lib/types";
+import { SUPPLEMENTS, SUPPLEMENT_NAMES_FR, formatDollars, supplementPriceText, surchargeText } from "@/lib/pricing";
 
 const services = [
   {
     name: "Extérieur Seul",
     slug: "exterieur",
-    price: "65$",
+    price: formatDollars(SERVICE_PRICES.exterior),
     priceTax: "avant taxes",
     duration: "45 min",
     priceSub: null,
@@ -21,10 +23,10 @@ const services = [
   {
     name: "Intérieur Seul",
     slug: "interieur",
-    price: "70$",
+    price: formatDollars(SERVICE_PRICES.interior),
     priceTax: "avant taxes",
     duration: "60 min",
-    priceSub: "+15$ pour VUS",
+    priceSub: surchargeText("interior"),
     features: [
       "Aspiration complète",
       "Plastiques, sièges, tapis",
@@ -35,10 +37,10 @@ const services = [
   {
     name: "Service Complet",
     slug: "complet",
-    price: "99$",
+    price: formatDollars(SERVICE_PRICES.complete),
     priceTax: "avant taxes",
     duration: "90 min",
-    priceSub: "+20$ pour VUS",
+    priceSub: surchargeText("complete"),
     features: [
       "Tout l'extérieur + intérieur",
       "Finition détaillée",
@@ -48,10 +50,7 @@ const services = [
 ];
 
 const supplements = [
-  "Traitement calcium : +25$",
-  "Shampoing moteur : +40$",
-  "Traitement céramique + décontamination : +199$ / +249$ VUS",
-  "Produit à mouche : +25$",
+  ...SUPPLEMENTS.map(s => `${SUPPLEMENT_NAMES_FR[s.key] ?? s.key} : ${supplementPriceText(s)}`),
   "Demandes spéciales sur mesure",
 ];
 

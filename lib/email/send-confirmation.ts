@@ -1,5 +1,5 @@
 import { Resend } from 'resend'
-import { buildPriceBreakdown } from '@/lib/pricing'
+import { buildPriceBreakdown, formatDollars, SERVICE_NAMES_FR, SUPPLEMENT_NAMES_FR } from '@/lib/pricing'
 import { formatBusinessDateTime } from '@/lib/time'
 import type { VehicleType } from '@/lib/vehicles'
 import type { ServiceType } from '@/lib/types'
@@ -11,19 +11,6 @@ function getResend(): Resend {
 }
 
 const OWNER_EMAIL = process.env.OWNER_NOTIFICATION_EMAIL ?? ''
-
-const SERVICE_FR: Record<string, string> = {
-  exterior: 'Lavage extérieur',
-  interior: 'Lavage intérieur',
-  complete: 'Lavage complet',
-}
-
-const SUPPLEMENT_FR: Record<string, string> = {
-  calcium: 'Traitement calcium',
-  moteur: 'Shampoing moteur',
-  ceramique: 'Traitement céramique + décontamination',
-  mouche: 'Produit à mouche',
-}
 
 export interface BookingEmailPayload {
   bookingNumber: string
@@ -51,7 +38,7 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
   const dateStr = formatBusinessDateTime(p.scheduledAt)
 
   const supplementsLine = p.supplements.length > 0
-    ? p.supplements.map(s => SUPPLEMENT_FR[s] ?? s).join(', ')
+    ? p.supplements.map(s => SUPPLEMENT_NAMES_FR[s] ?? s).join(', ')
     : 'Aucun'
 
   const breakdown = buildPriceBreakdown(
@@ -64,7 +51,7 @@ export async function sendOwnerConfirmation(p: BookingEmailPayload): Promise<voi
         <td style="padding:6px 0;text-align:right;font-weight:600">${Math.round(l.cents / 100)} $</td></tr>
   `).join('')
 
-  const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111"><h2 style="background:#0A0A0A;color:#D5FC96;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">NOUVELLE RÉSERVATION — ${p.bookingNumber}</h2><div style="padding:24px;border:1px solid #e5e5e5;border-top:none"><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><td style="padding:8px 0;color:#666;width:140px">Client</td><td style="padding:8px 0;font-weight:600">${p.firstName} ${p.lastName}</td></tr><tr><td style="padding:8px 0;color:#666">Téléphone</td><td style="padding:8px 0">${p.phone}</td></tr><tr><td style="padding:8px 0;color:#666">Courriel</td><td style="padding:8px 0">${p.email ?? '—'}</td></tr><tr><td style="padding:8px 0;color:#666">Date</td><td style="padding:8px 0;font-weight:600;color:#0070f3">${dateStr}</td></tr><tr><td style="padding:8px 0;color:#666">Service</td><td style="padding:8px 0">${SERVICE_FR[p.serviceType] ?? p.serviceType}</td></tr><tr><td style="padding:8px 0;color:#666">Suppléments</td><td style="padding:8px 0">${supplementsLine}</td></tr><tr><td style="padding:8px 0;color:#666">Véhicule</td><td style="padding:8px 0">${p.vehicleMake} ${p.vehicleModel} ${p.vehicleYear} — ${p.vehicleColor}</td></tr><tr><td colspan="2" style="padding:12px 0 4px;color:#999;font-size:12px;border-top:1px solid #eee">DÉTAIL DE LA COMMANDE</td></tr>
+  const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111"><h2 style="background:#0A0A0A;color:#D5FC96;padding:20px 24px;margin:0;font-size:18px;letter-spacing:1px">NOUVELLE RÉSERVATION — ${p.bookingNumber}</h2><div style="padding:24px;border:1px solid #e5e5e5;border-top:none"><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><td style="padding:8px 0;color:#666;width:140px">Client</td><td style="padding:8px 0;font-weight:600">${p.firstName} ${p.lastName}</td></tr><tr><td style="padding:8px 0;color:#666">Téléphone</td><td style="padding:8px 0">${p.phone}</td></tr><tr><td style="padding:8px 0;color:#666">Courriel</td><td style="padding:8px 0">${p.email ?? '—'}</td></tr><tr><td style="padding:8px 0;color:#666">Date</td><td style="padding:8px 0;font-weight:600;color:#0070f3">${dateStr}</td></tr><tr><td style="padding:8px 0;color:#666">Service</td><td style="padding:8px 0">${SERVICE_NAMES_FR[p.serviceType as ServiceType] ?? p.serviceType}</td></tr><tr><td style="padding:8px 0;color:#666">Suppléments</td><td style="padding:8px 0">${supplementsLine}</td></tr><tr><td style="padding:8px 0;color:#666">Véhicule</td><td style="padding:8px 0">${p.vehicleMake} ${p.vehicleModel} ${p.vehicleYear} — ${p.vehicleColor}</td></tr><tr><td colspan="2" style="padding:12px 0 4px;color:#999;font-size:12px;border-top:1px solid #eee">DÉTAIL DE LA COMMANDE</td></tr>
   ${breakdownRowsHtml}
   <tr><td style="padding:10px 0;font-weight:700;border-top:2px solid #0A0A0A">Total</td>
       <td style="padding:10px 0;text-align:right;font-weight:700;font-size:16px;border-top:2px solid #0A0A0A">${Math.round(breakdown.totalCents / 100)} $</td></tr></table></div><div style="padding:12px 24px;background:#f9f9f9;font-size:12px;color:#999">Auto Lavaggio — Généré automatiquement</div></div>`
@@ -88,6 +75,7 @@ export interface ClientEmailPayload {
   vehicleModel: string
   vehicleYear: number
   vehicleColor: string
+  vehicleType: VehicleType
   totalPriceCents: number
 }
 
@@ -96,24 +84,14 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
 
   const dateStr = formatBusinessDateTime(p.scheduledAt)
 
-  const SERVICE_FR: Record<string, string> = {
-    exterior: 'Lavage extérieur',
-    interior: 'Lavage intérieur',
-    complete: 'Lavage complet',
-  }
-
-  const SUPPLEMENT_FR: Record<string, string> = {
-    calcium: 'Traitement calcium (+25 $)',
-    moteur: 'Shampoing moteur (+40 $)',
-    ceramique: 'Traitement céramique + décontamination (+199 $ / +249 $ VUS)',
-    mouche: 'Produit à mouche (+25 $)',
-  }
-
   const totalDisplay = Math.round(p.totalPriceCents / 100)
-  const supplementsHtml = p.supplements.length > 0
+  // Suppléments au prix réellement facturé pour ce véhicule (lib/pricing)
+  const supplementLines = buildPriceBreakdown(p.serviceType as ServiceType, p.supplements, p.vehicleType)
+    .lines.filter(l => l.kind === 'supplement')
+  const supplementsHtml = supplementLines.length > 0
     ? `<div style="padding:16px 28px;background:#fffbf7;border-bottom:1px solid #f0f0f0;border-left:3px solid #E8651A">
         <div style="font-size:11px;color:#E8651A;font-weight:700;margin-bottom:4px">Suppléments inclus</div>
-        ${p.supplements.map(s => `<div style="font-size:13px;color:#555">+ ${SUPPLEMENT_FR[s] ?? s}</div>`).join('')}
+        ${supplementLines.map(l => `<div style="font-size:13px;color:#555">+ ${l.label} — +${formatDollars(l.cents, true)}</div>`).join('')}
        </div>`
     : ''
 
@@ -132,7 +110,7 @@ export async function sendClientConfirmation(p: ClientEmailPayload): Promise<voi
           <tr><td style="padding:11px 0;color:#666;border-bottom:1px solid #f5f5f5;width:130px;font-weight:500">📅 Date</td>
               <td style="padding:11px 0;border-bottom:1px solid #f5f5f5;font-weight:700;color:#111;text-transform:capitalize">${dateStr}</td></tr>
           <tr><td style="padding:11px 0;color:#666;border-bottom:1px solid #f5f5f5;font-weight:500">🧼 Service</td>
-              <td style="padding:11px 0;border-bottom:1px solid #f5f5f5;color:#111">${SERVICE_FR[p.serviceType] ?? p.serviceType}</td></tr>
+              <td style="padding:11px 0;border-bottom:1px solid #f5f5f5;color:#111">${SERVICE_NAMES_FR[p.serviceType as ServiceType] ?? p.serviceType}</td></tr>
           <tr><td style="padding:11px 0;color:#666;border-bottom:1px solid #f5f5f5;font-weight:500">🚗 Véhicule</td>
               <td style="padding:11px 0;border-bottom:1px solid #f5f5f5;color:#111">${p.vehicleMake} ${p.vehicleModel} ${p.vehicleYear} — ${p.vehicleColor}</td></tr>
           <tr><td style="padding:11px 0;color:#666;font-weight:500">💳 Total</td>

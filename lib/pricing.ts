@@ -30,15 +30,6 @@ export const SUV_SURCHARGE_BY_SERVICE: Record<ServiceType, number> = {
   complete: 2000,
 }
 
-type Supplement = { key: string; label: string; amount: number; amountBySuv?: number }
-
-export const SUPPLEMENTS: Supplement[] = [
-  { key: 'calcium',   label: 'Traitement calcium (+25$)',                                   amount: 2500 },
-  { key: 'moteur',    label: 'Shampoing moteur (+40$)',                                     amount: 4000 },
-  { key: 'ceramique', label: 'Traitement céramique + décontamination (+199$ / +249$ VUS)', amount: 19900, amountBySuv: 24900 },
-  { key: 'mouche',    label: 'Produit à mouche (+25$)',                                    amount: 2500 },
-]
-
 export const SERVICE_NAMES_FR: Record<ServiceType, string> = {
   exterior: 'Lavage extérieur',
   interior: 'Lavage intérieur',
@@ -51,6 +42,39 @@ export const SUPPLEMENT_NAMES_FR: Record<string, string> = {
   ceramique: 'Traitement céramique + décontamination',
   mouche: 'Produit à mouche',
 }
+
+// ── Textes de prix, toujours générés depuis les montants ci-dessus ──────────
+// space = true : style des courriels ("25 $") ; false : style du site ("25$")
+export function formatDollars(cents: number, space = false): string {
+  return `${Math.round(cents / 100)}${space ? ' ' : ''}$`
+}
+
+// "+25$" ou, si le prix dépend du véhicule, "+199$ / +249$ VUS/pick-up"
+export function supplementPriceText(sup: { amount: number; amountBySuv?: number }, space = false): string {
+  const base = `+${formatDollars(sup.amount, space)}`
+  return sup.amountBySuv ? `${base} / +${formatDollars(sup.amountBySuv, space)} ${SUV_TIER_LABEL}` : base
+}
+
+// "+15$ pour VUS/pick-up", ou null si le service n'a pas de majoration
+export function surchargeText(serviceType: ServiceType, space = false): string | null {
+  const cents = SUV_SURCHARGE_BY_SERVICE[serviceType]
+  return cents > 0 ? `+${formatDollars(cents, space)} pour ${SUV_TIER_LABEL}` : null
+}
+
+type Supplement = { key: string; label: string; amount: number; amountBySuv?: number }
+
+const SUPPLEMENT_AMOUNTS: Omit<Supplement, 'label'>[] = [
+  { key: 'calcium',   amount: 2500 },
+  { key: 'moteur',    amount: 4000 },
+  { key: 'ceramique', amount: 19900, amountBySuv: 24900 },
+  { key: 'mouche',    amount: 2500 },
+]
+
+// label (ex. "Traitement calcium (+25$)") généré : un changement de montant suffit
+export const SUPPLEMENTS: Supplement[] = SUPPLEMENT_AMOUNTS.map(s => ({
+  ...s,
+  label: `${SUPPLEMENT_NAMES_FR[s.key] ?? s.key} (${supplementPriceText(s)})`,
+}))
 
 export function vehicleSurcharge(serviceType: ServiceType, vehicleType: VehicleType): number {
   return priceTier(vehicleType) === 'suv' ? SUV_SURCHARGE_BY_SERVICE[serviceType] : 0

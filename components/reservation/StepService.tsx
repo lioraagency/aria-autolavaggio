@@ -1,8 +1,8 @@
 'use client'
 
 import type { ChangeEvent } from 'react'
-import { ServiceType, VehicleType, SERVICE_DURATIONS } from '@/lib/types'
-import { SUPPLEMENTS, computeTotal } from '@/lib/pricing'
+import { ServiceType, VehicleType, SERVICE_DURATIONS, SERVICE_PRICES } from '@/lib/types'
+import { SUPPLEMENTS, computeTotal, surchargeText } from '@/lib/pricing'
 
 interface BookingFormState {
   serviceType: ServiceType | null
@@ -36,9 +36,9 @@ interface StepProps {
 }
 
 const SERVICES: { key: ServiceType; label: string; price: number; duration: number; badge?: string; sub?: string }[] = [
-  { key: 'exterior', label: 'Extérieur Seul', price: 6500, duration: 45 },
-  { key: 'interior', label: 'Intérieur Seul', price: 7000, duration: 60, sub: '+15$ pour VUS' },
-  { key: 'complete', label: 'Service Complet', price: 9900, duration: 90, sub: '+20$ pour VUS', badge: 'Recommandé' },
+  { key: 'exterior', label: 'Extérieur Seul', price: SERVICE_PRICES.exterior, duration: 45 },
+  { key: 'interior', label: 'Intérieur Seul', price: SERVICE_PRICES.interior, duration: 60, sub: surchargeText('interior') ?? undefined },
+  { key: 'complete', label: 'Service Complet', price: SERVICE_PRICES.complete, duration: 90, sub: surchargeText('complete') ?? undefined, badge: 'Recommandé' },
 ]
 
 
