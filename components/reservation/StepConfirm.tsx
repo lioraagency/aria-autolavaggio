@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ServiceType, SERVICE_LABELS, VehicleType } from '@/lib/types'
 import { SUV_SURCHARGE_BY_SERVICE, SUPPLEMENTS } from '@/lib/pricing'
+import { VEHICLE_LABELS } from '@/lib/vehicles'
 
 interface BookingFormState {
   serviceType: ServiceType | null
@@ -60,14 +61,6 @@ function maskPhone(raw: string): string {
   if (digits.length <= 3) return digits
   if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
-}
-
-const VEHICLE_TYPE_LABELS: Record<VehicleType, string> = {
-  sedan:       'Berline',
-  suv_compact: 'VUS compact',
-  suv:         'VUS',
-  truck:       'Pickup',
-  compact:     'Compacte',
 }
 
 export default function StepConfirm({ state, onBack }: StepProps) {
@@ -177,7 +170,7 @@ export default function StepConfirm({ state, onBack }: StepProps) {
         <span className="font-condensed font-black uppercase text-aria-muted text-xs tracking-wider">Véhicule</span>
         <div className="flex items-center gap-2 flex-wrap">
           <span className="bg-aria-elevated border border-[rgba(255,255,255,0.06)] px-2 py-0.5 rounded text-aria-muted text-xs font-condensed uppercase">
-            {VEHICLE_TYPE_LABELS[state.vehicleType]}
+            {VEHICLE_LABELS[state.vehicleType]}
           </span>
           <span className="text-aria-text font-sans text-sm">
             {state.vehicleMake} {state.vehicleModel} {state.vehicleYear}

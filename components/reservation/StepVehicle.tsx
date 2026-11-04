@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { VehicleType } from '@/lib/types'
 import { computeTotal } from '@/lib/pricing'
+import { SELECTABLE_VEHICLE_TYPES, VEHICLE_LABELS } from '@/lib/vehicles'
 
 interface BookingFormState {
   serviceType: 'exterior' | 'interior' | 'complete' | null
@@ -31,12 +32,8 @@ interface StepProps {
   onBack: () => void
 }
 
-const VEHICLE_CHIPS: { label: string; value: VehicleType }[] = [
-  { label: 'Berline',     value: 'sedan'      },
-  { label: 'VUS compact', value: 'suv_compact' },
-  { label: 'VUS',         value: 'suv'         },
-  { label: 'Pick-up',     value: 'truck'       },
-]
+const VEHICLE_CHIPS: { label: string; value: VehicleType }[] =
+  SELECTABLE_VEHICLE_TYPES.map(value => ({ label: VEHICLE_LABELS[value], value }))
 
 const COLORS: { label: string; dot: string }[] = [
   { label: 'Noir', dot: '#1A1A1A' },
@@ -58,17 +55,14 @@ const MAKES_GROUPS: MakeGroup[] = [
   { group: 'Luxe / Premium', items: LUXURY },
 ]
 
-const INITIAL_CHIP_FOR_TYPE: Record<VehicleType, string> = {
-  sedan:       'Berline',
-  suv_compact: 'VUS compact',
-  suv:         'VUS',
-  truck:       'Pick-up',
-  compact:     'Berline',
+// Un type qui n'est plus proposé (ex. "compact") présélectionne la puce Berline
+function initialChipLabel(type: VehicleType): string {
+  return SELECTABLE_VEHICLE_TYPES.includes(type) ? VEHICLE_LABELS[type] : VEHICLE_LABELS.sedan
 }
 
 export default function StepVehicle({ state, onChange, onNext, onBack }: StepProps) {
   const [selectedChipLabel, setSelectedChipLabel] = useState<string>(
-    INITIAL_CHIP_FOR_TYPE[state.vehicleType]
+    initialChipLabel(state.vehicleType)
   )
   const [makesOpen, setMakesOpen] = useState(false)
   const [makesQuery, setMakesQuery] = useState(state.vehicleMake)

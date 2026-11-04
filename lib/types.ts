@@ -17,7 +17,8 @@ export type PaymentStatus =
 
 export type ServiceType = 'exterior' | 'interior' | 'complete'
 
-export type VehicleType = 'sedan' | 'suv' | 'suv_compact' | 'truck' | 'compact'
+import type { VehicleType } from './vehicles'
+export type { VehicleType }
 
 export interface Vehicle {
   id: string
