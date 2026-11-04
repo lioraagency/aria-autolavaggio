@@ -7,6 +7,7 @@ import Testimonials from "@/components/site/Testimonials";
 import Gallery from "@/components/site/Gallery";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
+import MobileBookingBar from "@/components/site/MobileBookingBar";
 
 export const metadata: Metadata = {
   title: "Autolavaggio — Lavage auto à la main, sans rendez-vous · Sainte-Foy",
@@ -30,6 +31,7 @@ export default function HomePage() {
       <Gallery />
       <Contact />
       <Footer />
+      <MobileBookingBar />
     </main>
   );
 }

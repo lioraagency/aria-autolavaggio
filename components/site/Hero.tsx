@@ -57,6 +57,7 @@ export default function Hero() {
         >
           <Link
             href="/reservation"
+            data-hero-cta
             className="bg-aria-accent text-[#0A0A0A] px-8 py-4 font-condensed font-black uppercase tracking-wider rounded-lg hover:scale-105 transition-transform text-base text-center"
           >
             Réserver →
