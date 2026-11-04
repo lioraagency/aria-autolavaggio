@@ -18,3 +18,6 @@ export const SLUG_TO_SERVICE_TYPE: Record<string, ServiceType> = {
   exterieur: 'exterior',
   interieur: 'interior',
 }
+
+// URL publique canonique (robots, sitemap, données structurées)
+export const SITE_URL = "https://www.autolavaggio.ca"
